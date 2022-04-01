@@ -45,33 +45,74 @@ maxDelPar' (n,m) = max n m
 -- 1. Definir el tipo de dato Dir, con las alternativas Norte, Sur, Este y Oeste. Luego implementar
 -- las siguientes funciones:
 
+data Dir = Norte | Sur | Este | Oeste deriving Show
+
 -- a) opuesto :: Dir -> Dir
 -- Dada una dirección devuelve su opuesta.
+opuesto :: Dir -> Dir
+opuesto Norte = Sur
+opuesto Sur = Norte
+opuesto Este = Oeste
+opuesto Este = Oeste
+
 
 -- b) iguales :: Dir -> Dir -> Bool
 -- Dadas dos direcciones, indica si son la misma. Nota: utilizar pattern matching y no ==.
+iguales :: Dir -> Dir -> Bool
+iguales Norte Norte = True
+iguales Sur Sur = True
+iguales Este Este = True
+iguales Oeste Oeste = True
+iguales _ _ = False
 
 -- c) siguiente :: Dir -> Dir
 -- Dada una dirección devuelve su siguiente, en sentido horario, y suponiendo que no existe
 -- la siguiente dirección a Oeste. ¿Posee una precondición esta función? ¿Es una función
 -- total o parcial? ¿Por qué?
+siguiente :: Dir -> Dir
+
+siguiente Sur = Este
+siguiente Este = Norte
+siguiente Norte = Este
+siguiente Oeste = error "No existe siguiente de Oeste"
 
 -- 2. Definir el tipo de dato DiaDeSemana, con las alternativas Lunes, Martes, Miércoles, Jueves,
 -- Viernes, Sabado y Domingo. Supongamos que el primer día de la semana es lunes, y el último
 -- es domingo. Luego implementar las siguientes funciones:
+data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes| Sabado | Domingo deriving Show
+
 
 -- a) primeroYUltimoDia :: (DiaDeSemana, DiaDeSemana)
 -- Devuelve un par donde la primera componente es el primer día de la semana, y la
 -- segunda componente es el último día de la semana.
+primeroYUltimoDia :: (DiaDeSemana,DiaDeSemana)
+primeroYUltimoDia = (Lunes, Domingo)
 
 -- b) empiezaConM :: DiaDeSemana -> Bool
 -- Dado un dia de la semana indica si comienza con la letra M.
+empiezaConM :: DiaDeSemana -> Bool
+empiezaConM Martes = True
+empiezaConM Miercoles = True
+empiezaConM _ = False
 
 -- c) vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
 -- Dado dos dias de semana, indica si el primero viene después que el segundo.
+vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
+vieneDespues Lunes Martes     = True
+vieneDespues Martes Miercoles = True
+vieneDespues Miercoles Jueves = True
+vieneDespues Jueves Viernes   = True
+vieneDespues Viernes Sabado   = True
+vieneDespues Sabado Domingo   = True
+vieneDespues _ _              = False
+
 
 -- d) estaEnElMedio :: DiaDeSemana -> Bool
 -- Dado un dia de la semana indica si no es ni el primer ni el ultimo dia.
+estaEnElMedio :: DiaDeSemana -> Bool
+estaEnElMedio Lunes   = True
+estaEnElMedio Domingo = True
+estaEnElMedio _       = False
 
 -- 3. Los booleanos también son un tipo de enumerativo. Un booleano es True o False. Defina
 -- las siguientes funciones utilizando pattern matching (no usar las funciones sobre booleanos
@@ -80,19 +121,32 @@ maxDelPar' (n,m) = max n m
 -- a) negar :: Bool -> Bool
 -- Dado un booleano, si es True devuelve False, y si es False devuelve True.
 -- En Haskell ya está definida como not.
+negar :: Bool -> Bool
+negar True  = False
+negar False = True
+
 
 -- b) implica :: Bool -> Bool -> Bool
 -- Dados dos booleanos, si el primero es True y el segundo es False, devuelve False, sino
 -- devuelve True.
 -- Nota: no viene implementada en Haskell.
+implica :: Bool -> Bool -> Bool
+implica True False = False
+implica _   _      = True
 
 -- c) and :: Bool -> Bool -> Bool
 -- Dados dos booleanos si ambos son True devuelve True, sino devuelve False.
 -- En Haskell ya está definida como \&\&.
+and :: Bool -> Bool -> Bool
+and True True   = True
+and _   _       = False
 
 -- d) or :: Bool -> Bool -> Bool
 -- Dados dos booleanos si alguno de ellos es True devuelve True, sino devuelve False.
 -- En Haskell ya está definida como ||.
+or :: Bool -> Bool -> Bool
+or True _      = True
+or False False = False
 
 -- 3. Registros
 
