@@ -152,40 +152,109 @@ or False False = False
 
 -- 1. Definir el tipo de dato Persona, como un nombre y la edad de la persona. Realizar las
 -- siguientes funciones:
+data Persona = P String  Int deriving Show -- nombre y edad
+
+fer = P "Fernando" 35
+nymeria = P "nymeria" 3
 
 -- nombre :: Persona -> String
 -- Devuelve el nombre de una persona
+nombre :: Persona -> String
+nombre (P n _ )  = n 
+
 
 -- edad :: Persona -> Int
 -- Devuelve la edad de una persona
+edad :: Persona -> Int
+edad (P _ e)  = e
 
 -- crecer :: Persona -> Persona
 -- Aumenta en uno la edad de la persona.
+crecer :: Persona -> Persona
+crecer (P n e) = (P n  (e+1))
 
 -- cambioDeNombre :: String -> Persona -> Persona
 -- Dados un nombre y una persona, devuelve una persona con la edad de la persona y el
 -- nuevo nombre.
+cambioDeNombre :: String -> Persona -> Persona
+cambioDeNombre nombreNuevo (P n e) = (P nombreNuevo e)
 
 -- esMayorQueLaOtra :: Persona -> Persona -> Bool
 -- Dadas dos personas indica si la primera es mayor que la segunda.
-
+esMayorQueLaOtra :: Persona -> Persona -> Bool
+esMayorQueLaOtra (P n1 e1)(P n2 e2)     = 
+    if e1>e2
+    then True
+    else False
+                                        
 -- laQueEsMayor :: Persona -> Persona -> Persona
 -- Dadas dos personas devuelve a la persona que sea mayor.
+laQueEsMayor :: Persona -> Persona -> Persona
+laQueEsMayor (P n1 e1)(P n2 e2) = laMayorPersona (P n1 e1)(P n2 e2)
+   
+
+laMayorPersona :: Persona -> Persona -> Persona --Auxiliar
+laMayorPersona (P n1 e1)(P n2 e2) =
+    if(esMayorQueLaOtra(P n1 e1)(P n2 e2))
+    then (P n1 e1)
+    else (P n2 e2)
 
 -- 2. Definir los tipos de datos Pokemon, como un TipoDePokemon (agua, fuego o planta) y un
 -- porcentaje de energía; y Entrenador, como un nombre y dos Pokémon. Luego definir las
 -- siguientes funciones:
+data TipoDePokemon =  Agua | Fuego | Planta          deriving Show
+data Pokemon       = Pk TipoDePokemon  Int           deriving Show  --int es energia
+data Entrenador    = E String  Pokemon  Pokemon      deriving Show
+
+--Pokemones para probar 
+charizard = Pk Fuego 25
+flareon = Pk Fuego 100
+
+lapras = Pk Agua 50
+vaporeon = Pk Agua 200
+
+gloom = Pk Planta 75
+trecko = Pk Planta 300
+
+--Entrenadores para probar
+red = E "Red" charizard lapras
+gary = E "Gary"trecko vaporeon
+misty = E "Misty" lapras vaporeon
 
 -- superaA :: Pokemon -> Pokemon -> Bool
 -- Dados dos Pokémon indica si el primero, en base al tipo, es superior al segundo. Agua
 -- supera a fuego, fuego a planta y planta a agua. Y cualquier otro caso es falso.
 
+superaA :: Pokemon -> Pokemon -> Bool
+superaA (Pk t1 e1) (Pk t2 e2)    = elementoSuperiorA t1 t2
+
+elementoSuperiorA :: TipoDePokemon -> TipoDePokemon -> Bool
+elementoSuperiorA Agua  Fuego    = True
+elementoSuperiorA Fuego Planta   = True
+elementoSuperiorA Planta Agua    = True
+elementoSuperiorA _   _          = False
+
+
 -- cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 -- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
+cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantidadDePokemonDe tipoCant (E n (Pk t1 e1) (Pk t2 e2)) = contarSiEsDeTipo tipoCant t1 + 
+                                                           contarSiEsDeTipo tipoCant t2
+
+-- unoSi:: Bool -> Int
+-- unoSi True =  1
+-- unoSi False = 0
+
+contarSiEsDeTipo :: TipoDePokemon -> TipoDePokemon -> Int
+contarSiEsDeTipo Agua Agua     = 1
+contarSiEsDeTipo Fuego Fuego   = 1
+contarSiEsDeTipo Planta Planta = 1
+contarSiEsDeTipo _ _           = 0
 
 -- juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 -- Dado un par de entrenadores, devuelve a sus Pokémon en una lista.
-
+juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
+juntarPokemon ((E n1 pk1 pk2) , (E n2 pk3 pk4) ) =  pk1: pk2 : pk3 :[pk4]
 
 -- 4. Funciones polimórficas
 
@@ -193,16 +262,25 @@ or False False = False
 
 -- a) loMismo :: a -> a
 -- Dado un elemento de algún tipo devuelve ese mismo elemento.
+loMismo :: a -> a 
+loMismo x = x
 
 -- b) siempreSiete :: a -> Int
 -- Dado un elemento de algún tipo devuelve el número 7.
+siempreSiete :: a -> Int
+siempreSiete x = 7
 
 -- c) swap :: (a,b) -> (b, a)
 -- Dadas una tupla, invierte sus componentes.
+swap :: (a,b) -> (b,a)
+swap (x,y) = (y,x)
 
 -- ¿Por qué existen dos variables de tipo diferentes?
+--Porque una define la estructura y la otra su contenido
 
 -- 2. Responda la siguiente pregunta: ¿Por qué estas funciones son polimórficas?
+-- Porque se pueden utilizar con diferentes tipos de elementos.
+
 -- 5. Pattern matching sobre listas
 -- 1. Defina las siguientes funciones polimórficas utilizando pattern matching sobre listas (no
 -- utilizar las funciones que ya vienen con Haskell):
@@ -210,18 +288,27 @@ or False False = False
 -- 2. estaVacia :: [a] -> Bool
 -- Dada una lista de elementos, si es vacía devuelve True, sino devuelve False.
 -- Definida en Haskell como null.
+estaVacia :: [a] -> Bool
+estaVacia [] =  True
+estaVacia(x:xs) = False
 
 -- 3. elPrimero :: [a] -> a
 -- Dada una lista devuelve su primer elemento.
 -- Definida en Haskell como head.
 -- Nota: tener en cuenta que el constructor de listas es :
+elPrimero :: [a] -> a
+elPrimero (x:xs) = x
 
 -- 4. sinElPrimero :: [a] -> [a]
 -- Dada una lista devuelve esa lista menos el primer elemento.
 -- Definida en Haskell como tail.
 -- Nota: tener en cuenta que el constructor de listas es :
-
+sinElPrimero :: [a] -> [a]
+sinElPrimero (x:xs) = xs
+sinElPrimero [] = []
 -- 5. splitHead :: [a] -> (a, [a])
 -- Dada una lista devuelve un par, donde la primera componente es el primer elemento de la
 -- lista, y la segunda componente es esa lista pero sin el primero.
 -- Nota: tener en cuenta que el constructor de listas es :
+splitHead :: [a] -> (a,[a])
+splitHead (x:xs) = (x,xs)
