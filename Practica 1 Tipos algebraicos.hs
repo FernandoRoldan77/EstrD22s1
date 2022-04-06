@@ -307,9 +307,12 @@ elPrimero (x:xs) = x
 -- Dada una lista devuelve esa lista menos el primer elemento.
 -- Definida en Haskell como tail.
 -- Nota: tener en cuenta que el constructor de listas es :
+
+--Precondicion: La lista debe tener al menos un elemento.
 sinElPrimero :: [a] -> [a]
 sinElPrimero (x:xs) = xs
-sinElPrimero [] = []
+
+
 -- 5. splitHead :: [a] -> (a, [a])
 -- Dada una lista devuelve un par, donde la primera componente es el primer elemento de la
 -- lista, y la segunda componente es esa lista pero sin el primero.
