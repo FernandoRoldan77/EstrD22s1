@@ -97,15 +97,24 @@ empiezaConM _ = False
 
 -- c) vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
 -- Dado dos dias de semana, indica si el primero viene después que el segundo.
-vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
-vieneDespues Lunes Martes     = True
-vieneDespues Martes Miercoles = True
-vieneDespues Miercoles Jueves = True
-vieneDespues Jueves Viernes   = True
-vieneDespues Viernes Sabado   = True
-vieneDespues Sabado Domingo   = True
-vieneDespues _ _              = False
 
+vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
+vieneDespues d1 d2 = sonDiasDespues d1 d2
+
+sonDiasDespues:: DiaDeSemana -> DiaDeSemana -> Bool
+sonDiasDespues d1 d2    = if diasANumeros d1 < diasANumeros d2
+                          then True
+                          else False
+
+
+diasANumeros :: DiaDeSemana -> Int
+diasANumeros   Lunes     =   1
+diasANumeros   Martes    =   2
+diasANumeros   Miercoles =   3
+diasANumeros   Jueves    =   4
+diasANumeros   Viernes   =   5
+diasANumeros   Sabado    =   6
+diasANumeros   Domingo   =   7
 
 -- d) estaEnElMedio :: DiaDeSemana -> Bool
 -- Dado un dia de la semana indica si no es ni el primer ni el ultimo dia.
