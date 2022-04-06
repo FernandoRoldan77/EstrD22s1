@@ -155,6 +155,7 @@ and _   _       = False
 -- En Haskell ya está definida como ||.
 or :: Bool -> Bool -> Bool
 or True _      = True
+or False True  = True
 or False False = False
 
 -- 3. Registros
