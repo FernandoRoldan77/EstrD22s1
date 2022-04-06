@@ -209,7 +209,7 @@ laMayorPersona (P n1 e1)(P n2 e2) =
 -- 2. Definir los tipos de datos Pokemon, como un TipoDePokemon (agua, fuego o planta) y un
 -- porcentaje de energía; y Entrenador, como un nombre y dos Pokémon. Luego definir las
 -- siguientes funciones:
-data TipoDePokemon =  Agua | Fuego | Planta          deriving Show
+data TipoDePokemon =  Agua | Fuego | Planta          deriving (Show,Eq)
 data Pokemon       = Pk TipoDePokemon  Int           deriving Show  --int es energia
 data Entrenador    = E String  Pokemon  Pokemon      deriving Show
 
@@ -248,15 +248,14 @@ cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 cantidadDePokemonDe tipoCant (E n (Pk t1 e1) (Pk t2 e2)) = contarSiEsDeTipo tipoCant t1 + 
                                                            contarSiEsDeTipo tipoCant t2
 
--- unoSi:: Bool -> Int
--- unoSi True =  1
--- unoSi False = 0
 
 contarSiEsDeTipo :: TipoDePokemon -> TipoDePokemon -> Int
-contarSiEsDeTipo Agua Agua     = 1
-contarSiEsDeTipo Fuego Fuego   = 1
-contarSiEsDeTipo Planta Planta = 1
-contarSiEsDeTipo _ _           = 0
+contarSiEsDeTipo t1 t2 = unoSi(t1 == t2)
+
+unoSi:: Bool -> Int
+unoSi True =  1
+unoSi False = 0
+
 
 -- juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 -- Dado un par de entrenadores, devuelve a sus Pokémon en una lista.
