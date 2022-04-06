@@ -100,12 +100,8 @@ empiezaConM _ = False
 
 
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
-vieneDespues d1 d2 = sonDiasDespues d1 d2
+vieneDespues d1 d2 = diasANumeros d1 < diasANumeros d2
 
-sonDiasDespues:: DiaDeSemana -> DiaDeSemana -> Bool
-sonDiasDespues d1 d2    = if diasANumeros d1 < diasANumeros d2
-                          then True
-                          else False
 
 
 diasANumeros :: DiaDeSemana -> Int
