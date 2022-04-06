@@ -53,7 +53,7 @@ opuesto :: Dir -> Dir
 opuesto Norte = Sur
 opuesto Sur = Norte
 opuesto Este = Oeste
-opuesto Este = Oeste
+opuesto Oeste = Este
 
 
 -- b) iguales :: Dir -> Dir -> Bool
