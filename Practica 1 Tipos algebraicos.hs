@@ -242,15 +242,13 @@ elementoSuperiorA Planta Agua    = True
 elementoSuperiorA _   _          = False
 
 
--- cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
--- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
-cantidadDePokemonDe tipoCant (E n (Pk t1 e1) (Pk t2 e2)) = contarSiEsDeTipo tipoCant t1 + 
-                                                           contarSiEsDeTipo tipoCant t2
+cantidadDePokemonDe tipoCant (E n pk1 pk2 ) = contarSiEsDeTipo tipoCant pk1  + 
+                                              contarSiEsDeTipo tipoCant pk2 
 
 
-contarSiEsDeTipo :: TipoDePokemon -> TipoDePokemon -> Int
-contarSiEsDeTipo t1 t2 = unoSi(t1 == t2)
+contarSiEsDeTipo :: TipoDePokemon -> Pokemon -> Int
+contarSiEsDeTipo tipoAContar (Pk t1 _) = unoSi(tipoAContar == t1)
 
 unoSi:: Bool -> Int
 unoSi True =  1
