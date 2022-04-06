@@ -98,6 +98,7 @@ empiezaConM _ = False
 -- c) vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
 -- Dado dos dias de semana, indica si el primero viene después que el segundo.
 
+
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
 vieneDespues d1 d2 = sonDiasDespues d1 d2
 
@@ -155,8 +156,8 @@ and _   _       = False
 -- En Haskell ya está definida como ||.
 or :: Bool -> Bool -> Bool
 or True _      = True
-or False True  = True
-or False False = False
+or _ False = False
+
 
 -- 3. Registros
 
