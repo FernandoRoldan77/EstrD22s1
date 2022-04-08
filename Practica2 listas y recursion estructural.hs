@@ -52,33 +52,78 @@ pertenece a (x:xs) = (a == x) || pertenece a xs
 
 -- 8. apariciones :: Eq a => a -> [a] -> Int
 -- Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
+apariciones :: Eq a => a -> [a] -> Int
+apariciones a  []   = 0
+apariciones a (x:xs)    = if(a == x)
+                          then apariciones a xs + 1
+                          else apariciones a xs
+
 
 -- 9. losMenoresA :: Int -> [Int] -> [Int]
 -- Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
 
+losMenoresA :: Int -> [Int] -> [Int]
+losMenoresA n []        = []
+losMenoresA n (x:xs)    =   if(x < n )
+                            then x : losMenoresA n xs
+                            else losMenoresA n xs
+                        
 -- 10. lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 -- Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más
 -- de n elementos.
+lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
+lasDeLongitudMayorA n []        = []
+lasDeLongitudMayorA n (xs:xss)  = if longitud xs > n
+                                 then xs : lasDeLongitudMayorA n xss
+                                 else lasDeLongitudMayorA n xss
 
 -- 11. agregarAlFinal :: [a] -> a -> [a]
 -- Dados una lista y un elemento, devuelve una lista con ese elemento agregado al final de la
 -- lista.
+agregarAlFinal :: [a] -> a -> [a]
+agregarAlFinal [] e         =   [e]
+agregarAlFinal (x:xs) e     = x : agregarAlFinal xs e
+
 
 -- 12. concatenar :: [a] -> [a] -> [a]
 -- Dadas dos listas devuelve la lista con todos los elementos de la primera lista y todos los
 -- elementos de la segunda a continuación. Definida en Haskell como ++.
+concatenar :: [a] -> [a] -> [a]
+concatenar [] ys           =   ys
+concatenar (x:xs) ys  = x : concatenar xs ys
 
 -- 13. reversa :: [a] -> [a]
 -- Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. Definida
 -- en Haskell como reverse.
+reversa :: [a] -> [a]
+reversa []      =   []
+reversa (x:xs)  =   reversa xs ++ [x]
 
 -- 14. zipMaximos :: [Int] -> [Int] -> [Int]
 -- Dadas dos listas de enteros, devuelve una lista donde el elemento en la posición n es el
 -- máximo entre el elemento n de la primera lista y de la segunda lista, teniendo en cuenta que
 -- las listas no necesariamente tienen la misma longitud.
+zipMaximos :: [Int] -> [Int] -> [Int]
+zipMaximos  ns1  []         = ns1
+zipMaximos  []  ns2         = ns2
+zipMaximos  (x:xs)  (y:ys)  = if(x >= y)
+                                then x : zipMaximos xs ys
+                                else y : zipMaximos xs ys
+
 
 -- 15. elMinimo :: Ord a => [a] -> a
 -- Dada una lista devuelve el mínimo
+--PreCondicion: La lista no debe estar vacia. 
+elMinimo :: Ord a => [a] -> a
+
+elMinimo [x]    = x
+elMinimo (x:xs) =  minimo x (elMinimo xs)
+
+minimo :: Ord a => a -> a -> a
+minimo x y = if x < y
+                then x
+                else y
+
 
 -- 2. Recursión sobre números
 -- Defina las siguientes funciones utilizando recursión sobre números enteros, salvo que se indique
