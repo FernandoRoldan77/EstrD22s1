@@ -144,8 +144,10 @@ implica _   _      = True
 -- Dados dos booleanos si ambos son True devuelve True, sino devuelve False.
 -- En Haskell ya está definida como \&\&.
 and :: Bool -> Bool -> Bool
-and True True   = True
-and _   _       = False
+and True b   = b
+and False _   = False
+
+
 
 -- d) or :: Bool -> Bool -> Bool
 -- Dados dos booleanos si alguno de ellos es True devuelve True, sino devuelve False.
@@ -227,6 +229,7 @@ trecko = Pk Planta 300
 red = E "Red" charizard lapras
 gary = E "Gary"trecko vaporeon
 misty = E "Misty" lapras vaporeon
+satoshi = E "Satoshi" flareon flareon
 
 -- superaA :: Pokemon -> Pokemon -> Bool
 -- Dados dos Pokémon indica si el primero, en base al tipo, es superior al segundo. Agua
