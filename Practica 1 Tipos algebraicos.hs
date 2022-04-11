@@ -207,6 +207,7 @@ laMayorPersona (P n1 e1)(P n2 e2) =
     if(esMayorQueLaOtra(P n1 e1)(P n2 e2))
     then (P n1 e1)
     else (P n2 e2)
+    
 
 -- 2. Definir los tipos de datos Pokemon, como un TipoDePokemon (agua, fuego o planta) y un
 -- porcentaje de energía; y Entrenador, como un nombre y dos Pokémon. Luego definir las

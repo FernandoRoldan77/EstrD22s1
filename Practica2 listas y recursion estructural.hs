@@ -170,16 +170,48 @@ sinLosPrimeros  n (x:xs) = sinLosPrimeros (n-1) xs
 -- 1. Definir el tipo de dato Persona, como un nombre y la edad de la persona. Realizar las
 -- siguientes funciones:
 
+data Persona = P String  Int deriving Show -- nombre y edad
+
+fer    = P "Fernando" 35
+billie = P "Billie" 3
+edda   = P "Edda"   12
+
 -- mayoresA :: Int -> [Persona] -> [Persona]
 -- Dados una edad y una lista de personas devuelve a las personas mayores a esa edad.
+mayoresA :: Int -> [Persona] -> [Persona]
+mayoresA e  []      =   []
+mayoresA e  (p:ps)  = if edad p > e
+                        then p : mayoresA e ps
+                        else mayoresA e ps
+
+-- Devuelve la edad de una persona
+edad :: Persona -> Int
+edad (P _ e) = e
 
 -- promedioEdad :: [Persona] -> Int
 -- Dada una lista de personas devuelve el promedio de edad entre esas personas. Precondición:
 -- la lista al menos posee una persona.
+promedioEdad :: [Persona] -> Int
+promedioEdad []   = error" La lista debe tener al menos una persona"
+promedioEdad ps   =  promedio ps
+
+todasLasEdades :: [Persona] -> Int
+todasLasEdades []       =   0
+todasLasEdades (p:ps)   = edad p + todasLasEdades ps
+
+promedio :: [Persona] -> Int
+promedio    []  =   0
+promedio    ps  =   div (todasLasEdades ps)  (longitud ps)
 
 -- elMasViejo :: [Persona] -> Persona
 -- Dada una lista de personas devuelve la persona más vieja de la lista. Precondición: la
 -- lista al menos posee una persona.
+elMasViejo :: [Persona] -> Persona
+elMasViejo []          = error "Debe haber al menos una persona"
+elMasViejo (p:[])      = p
+elMasViejo (p:p1:ps)   = if(edad p > edad p1)
+                        then elMasViejo (p:ps)
+                        else elMasViejo (p1:ps)
 
 
 -- 2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente
@@ -188,30 +220,113 @@ sinLosPrimeros  n (x:xs) = sinLosPrimeros (n-1) xs
 -- data Pokemon = ConsPokemon TipoDePokemon Int
 -- data Entrenador = ConsEntrenador String [Pokemon]
 -- Como puede observarse, ahora los entrenadores tienen una cantidad de Pokemon arbitraria.
+data TipoDePokemon = Agua | Fuego | Planta deriving (Show,Eq)
+data Pokemon = Pk TipoDePokemon Int deriving Show
+data Entrenador = E String [Pokemon] deriving Show
 
+charizard = Pk Fuego 25
+flareon = Pk Fuego 100
+
+lapras = Pk Agua 50
+vaporeon = Pk Agua 200
+
+gloom = Pk Planta 75
+trecko = Pk Planta 300
+
+--Entrenadores para probar
+red     = E "Red"  [charizard,lapras,gloom, vaporeon]
+gary    = E "Gary"[trecko,vaporeon]
+misty   = E "Misty" [lapras,vaporeon]
+satoshi = E "Satoshi" [flareon]
+blaine  = E "Blaine" [flareon, charizard, flareon, flareon, flareon]
+maestro = E "Maestro"[charizard, gloom, lapras]
 -- Definir en base a esa representación las siguientes funciones:
 
--- cantPokemon :: Entrenador -> Int
+-- cantipookemon :: Entrenador -> Int
 -- Devuelve la cantidad de Pokémon que posee el entrenador.
+cantipookemon :: Entrenador -> Int
+cantipookemon (E _ [])       = 0     
+cantipookemon (E _ (p:ps))   = contarPokemones (p:ps)
 
--- cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
+contarPokemones :: [Pokemon] -> Int
+contarPokemones []      =   0
+contarPokemones (p:ps)  =   longitud (p:ps)
+
+-- cantipookemonDe :: TipoDePokemon -> Entrenador -> Int
 -- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
+cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantidadDePokemonDe tipo (E _ [])       =   0
+cantidadDePokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
 
--- losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+contarPokemonesSegunTipo :: TipoDePokemon -> [Pokemon]  ->    Int
+contarPokemonesSegunTipo tipo []      =   0
+contarPokemonesSegunTipo tipo (p:ps)  =   contarSiEsDeTipo tipo p + 
+                                          contarPokemonesSegunTipo tipo ps
+--funciones practica 1
+contarSiEsDeTipo :: TipoDePokemon -> Pokemon -> Int
+contarSiEsDeTipo tipoAContar (Pk t1 _) = unoSi(tipoAContar == t1)
+
+unoSi:: Bool -> Int
+unoSi True =  1
+unoSi False = 0
+
+
 -- Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo, que le ganarían
 -- a los Pokemon del segundo entrenador.
+losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int 
+losQueLeGanan tipo  (E n1 [])  (E n2 [])  =   0
+losQueLeGanan tipo  (E n1 (pk1:pks1)) (E n2 pks) = sumaSiTipoLeGanaA (tipoPokemon pk1) pks
+
+
+sumaSiTipoLeGanaA :: TipoDePokemon -> [Pokemon]  -> Int --suma 1 si el tipo es superior a algun tipo de pokemon de la lista
+sumaSiTipoLeGanaA tipo []          = 0
+sumaSiTipoLeGanaA tipo (p:pks)     =  if(elementoSuperiorA tipo (tipoPokemon p))
+                                      then (sumaSiTipoLeGanaA tipo pks) + 1
+                                      else sumaSiTipoLeGanaA tipo pks
+    --auxiliar practica 1
+elementoSuperiorA :: TipoDePokemon -> TipoDePokemon -> Bool
+elementoSuperiorA Agua  Fuego    = True
+elementoSuperiorA Fuego Planta   = True
+elementoSuperiorA Planta Agua    = True
+elementoSuperiorA _   _          = False
+
+--auxiliar
+tipoPokemon :: Pokemon -> TipoDePokemon
+tipoPokemon (Pk t _)    =   t
+esTipoDePokemon :: Pokemon -> TipoDePokemon -> Bool
+esTipoDePokemon (Pk t1 _) tipo  =   esMismoTipo tipo t1
 
 -- esMaestroPokemon :: Entrenador -> Bool
--- Dado un entrenador, devuelve True si posee al menos un Pokémon de cada tipo posible.
+-- Dado un entrenador, devuelve True si posee al menos un PokÃ©mon de cada tipo posible.
+
+esMaestroPokemon :: Entrenador -> Bool
+esMaestroPokemon (E _ (pk:pks)) = sonTodosLosTipos pks 
+
+sonTodosLosTipos :: [Pokemon]  -> Bool
+sonTodosLosTipos  []       = True
+sonTodosLosTipos  (pk:pks) = alMenosUnPokemonDeTipo [pk] (tipoPokemon pk)  && 
+                             sonTodosLosTipos  pks
+
+alMenosUnPokemonDeTipo :: [Pokemon] -> TipoDePokemon -> Bool
+alMenosUnPokemonDeTipo [] tipo       = False
+alMenosUnPokemonDeTipo (pk:pks) tipo = esTipoDePokemon pk tipo || 
+                                       alMenosUnPokemonDeTipo pks tipo
+
+esMismoTipo :: TipoDePokemon -> TipoDePokemon -> Bool
+esMismoTipo Fuego Fuego   = True
+esMismoTipo Agua Agua     = True
+esMismoTipo Planta Planta = True
+esMismoTipo _   _         = False
+ 
 
 -- 3. El tipo de dato Rol representa los roles (desarollo o management) de empleados IT dentro
 -- de una empresa de software, junto al proyecto en el que se encuentran. Así, una empresa es
 -- una lista de personas con diferente rol. La definición es la siguiente:
 
--- data Seniority = Junior | SemiSenior | Senior
--- data Proyecto = ConsProyecto String
--- data Rol = Developer Seniority Proyecto | Management Seniority Proyecto
--- data Empresa = ConsEmpresa [Rol]
+data Seniority = Junior | SemiSenior | Senior deriving Show
+data Proyecto = ConsProyecto String deriving Show
+data Rol = Developer Seniority Proyecto | Management Seniority Proyecto deriving Show
+data Empresa = ConsEmpresa [Rol]    deriving Show
 
 -- Definir las siguientes funciones sobre el tipo Empresa:
 
