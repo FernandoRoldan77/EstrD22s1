@@ -330,16 +330,94 @@ data Empresa = ConsEmpresa [Rol]    deriving Show
 
 -- Definir las siguientes funciones sobre el tipo Empresa:
 
--- proyectos :: Empresa -> [Proyecto]
+proyectos :: Empresa -> [Proyecto]
 -- Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
+proyectos (ConsEmpresa rs) = sinRepetidos (proyectoDeRoles rs)
+
+sinRepetidos :: [Proyecto] -> [Proyecto]
+sinRepetidos []     = []
+sinRepetidos (py:pys) = agregarProyectoSinRepetidos py pys
+
+agregarProyectoSinRepetidos:: Proyecto -> [Proyecto] -> [Proyecto]
+agregarProyectoSinRepetidos proyecto []             =   []
+agregarProyectoSinRepetidos proyecto (py:pys)       = if hayProyectoEn py (sinRepetidos pys)
+                                                      then sinRepetidos pys
+                                                      else py : sinRepetidos pys
+
+hayProyectoEn :: Proyecto -> [Proyecto] -> Bool
+hayProyectoEn _ []     = False
+hayProyectoEn proyecto (py:pys) =  sonMismosProyectos proyecto py || 
+                                   hayProyectoEn proyecto pys         
+
+sonMismosProyectos:: Proyecto -> Proyecto -> Bool
+sonMismosProyectos py1  py2 = (extraerNombre py1) == (extraerNombre py2)
+
+extraerNombre :: Proyecto -> String 
+extraerNombre (ConsProyecto n) = n
+
+proyectoDeRoles :: [Rol] -> [Proyecto]
+proyectoDeRoles []     = []
+proyectoDeRoles (r:rs) = extraerProyectoDeRol r : proyectoDeRoles rs
+
+extraerProyectoDeRol :: Rol -> Proyecto
+extraerProyectoDeRol (Developer _ p) = p
+extraerProyectoDeRol (Management _ p) = p
 
 -- losDevSenior :: Empresa -> [Proyecto] -> Int
 -- Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen
 -- además a los proyectos dados por parámetro.
+losDevSenior :: Empresa -> [Proyecto] -> Int
+losDevSenior (ConsEmpresa roles) pys = cantidadDeRolesEnProyectos (todosLosRolesSeniors roles) pys
+
+cantidadDeRolesEnProyectos :: [Rol] -> [Proyecto] -> Int 
+cantidadDeRolesEnProyectos [] pys     = 0
+cantidadDeRolesEnProyectos (r:rs) pys = unoSi (estaElRolEnProyecto r pys) + 
+                                        cantidadDeRolesEnProyectos rs pys
+
+estaElRolEnProyecto :: Rol -> [Proyecto] -> Bool 
+estaElRolEnProyecto (Developer _ p)  pys = estaEnProyecto p pys
+estaElRolEnProyecto (Management _ p) pys = estaEnProyecto p pys
+
+estaEnProyecto :: Proyecto -> [Proyecto] -> Bool 
+estaEnProyecto proyectoRol [] = False  
+estaEnProyecto proyectoRol (py:pys) = sonLosMismosProyectos py proyectoRol || 
+                                      estaEnProyecto proyectoRol pys 
+
+sonLosMismosProyectos :: Proyecto -> Proyecto -> Bool
+sonLosMismosProyectos (ConsProyecto proyecto) py  = sonProyectosConMismoNombre proyecto py
+
+sonProyectosConMismoNombre :: String -> Proyecto -> Bool 
+sonProyectosConMismoNombre proyecto (ConsProyecto proyectoRol) = proyecto == proyectoRol
+
+todosLosRolesSeniors :: [Rol] -> [Rol]
+todosLosRolesSeniors []     = []
+todosLosRolesSeniors (x:xs) = 
+    if rolesSenioritySenior x 
+        then x : todosLosRolesSeniors xs
+        else todosLosRolesSeniors xs
+
+rolesSenioritySenior :: Rol -> Bool
+rolesSenioritySenior (Developer s _)  = esSenior s
+rolesSenioritySenior (Management s _) = esSenior s
+
+esSenior :: Seniority -> Bool 
+esSenior Senior = True
+esSenior _      = False 
 
 -- cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
 -- Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
+cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
+cantQueTrabajanEn pys (ConsEmpresa rs) = cantidadDeRolesEnProyectos rs pys
 
 -- asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 -- Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su
 -- cantidad de personas involucradas.
+asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+asignadosPorProyecto empresa = cantidadDeRolesPorProyectos empresa (sinRepetidos (proyectoDeRoles (rolesDeLaEmpresa empresa)))
+
+rolesDeLaEmpresa :: Empresa -> [Rol]
+rolesDeLaEmpresa (ConsEmpresa roles) = roles
+
+cantidadDeRolesPorProyectos :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
+cantidadDeRolesPorProyectos e []       = []
+cantidadDeRolesPorProyectos e (py:pys) = (py, cantQueTrabajanEn [py] e) : cantidadDeRolesPorProyectos e pys
