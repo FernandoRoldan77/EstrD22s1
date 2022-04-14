@@ -134,14 +134,19 @@ minimo x y = if x < y
 -- llegar a 0. Si n es 0 devuelve 1. La función es parcial si n es negativo.
 factorial :: Int -> Int
 factorial 0   =   1
-factorial n    = n * factorial (n-1)
-
+factorial n   =  if( n < 0)
+                 then error "el numero no debe ser negativo"
+                 else
+                 n * factorial (n-1)
+                 
 -- 2. cuentaRegresiva :: Int -> [Int]
 -- Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre
 -- n y 1 (incluidos). Si el número es inferior a 1, devuelve la lista vacía.
 cuentaRegresiva :: Int -> [Int]
 cuentaRegresiva 0   = []
-cuentaRegresiva n   = n : cuentaRegresiva (n-1)
+cuentaRegresiva n   = if (n< 0)
+                     then []
+                     else n : cuentaRegresiva (n-1)
 
 -- 3. repetir :: Int -> a -> [a]
 -- Dado un número n y un elemento e devuelve una lista en la que el elemento e repite n veces.
@@ -259,7 +264,7 @@ cantidadDePokemonDe tipo (E _ [])       =   0
 cantidadDePokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
 
 contarPokemonesSegunTipo :: TipoDePokemon -> [Pokemon]  ->    Int
-contarPokemonesSegunTipo tipo []      =   0
+--contarPokemonesSegunTipo tipo []      =   0
 contarPokemonesSegunTipo tipo (p:ps)  =   contarSiEsDeTipo tipo p + 
                                           contarPokemonesSegunTipo tipo ps
 --funciones practica 1
