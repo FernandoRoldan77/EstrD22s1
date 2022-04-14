@@ -214,10 +214,14 @@ promedio    ps  =   div (todasLasEdades ps)  (longitud ps)
 elMasViejo :: [Persona] -> Persona
 elMasViejo []          = error "Debe haber al menos una persona"
 elMasViejo (p:[])      = p
-elMasViejo (p:p1:ps)   = if(edad p > edad p1)
-                        then elMasViejo (p:ps)
-                        else elMasViejo (p1:ps)
-
+elMasViejo (p:ps)      =  if (esMayorA p (elMasViejo ps))
+                          then p 
+                          else elMasViejo ps
+                          
+esMayorA :: Persona -> Persona-> Bool
+esMayorA    p1  p2 =    if(edad p1 > edad p2)
+                        then True
+                        else False
 
 -- 2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente
 -- manera:
@@ -341,13 +345,12 @@ proyectos (ConsEmpresa rs) = sinRepetidos (proyectoDeRoles rs)
 
 sinRepetidos :: [Proyecto] -> [Proyecto]
 sinRepetidos []     = []
-sinRepetidos (py:pys) = agregarProyectoSinRepetidos py pys
+sinRepetidos (py:pys) = agregarSiHaceFalta py (sinRepetidos pys)
 
-agregarProyectoSinRepetidos:: Proyecto -> [Proyecto] -> [Proyecto]
-agregarProyectoSinRepetidos proyecto []             =   []
-agregarProyectoSinRepetidos proyecto (py:pys)       = if hayProyectoEn py (sinRepetidos pys)
-                                                      then sinRepetidos pys
-                                                      else py : sinRepetidos pys
+agregarSiHaceFalta :: Proyecto -> [Proyecto] -> [Proyecto]
+agregarSiHaceFalta x ys = if (hayProyectoEn x ys)
+                             then ys
+                             else x:ys
 
 hayProyectoEn :: Proyecto -> [Proyecto] -> Bool
 hayProyectoEn _ []     = False
