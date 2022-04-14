@@ -198,15 +198,11 @@ edad (P _ e) = e
 -- la lista al menos posee una persona.
 promedioEdad :: [Persona] -> Int
 promedioEdad []   = error" La lista debe tener al menos una persona"
-promedioEdad ps   =  promedio ps
+promedioEdad ps   =  div (todasLasEdades ps)  (longitud ps)
 
 todasLasEdades :: [Persona] -> Int
-todasLasEdades []       =   0
+todasLasEdades  []      =   0
 todasLasEdades (p:ps)   = edad p + todasLasEdades ps
-
-promedio :: [Persona] -> Int
-promedio    []  =   0
-promedio    ps  =   div (todasLasEdades ps)  (longitud ps)
 
 -- elMasViejo :: [Persona] -> Persona
 -- Dada una lista de personas devuelve la persona más vieja de la lista. Precondición: la
@@ -217,7 +213,7 @@ elMasViejo (p:[])      = p
 elMasViejo (p:ps)      =  if (esMayorA p (elMasViejo ps))
                           then p 
                           else elMasViejo ps
-                          
+
 esMayorA :: Persona -> Persona-> Bool
 esMayorA    p1  p2 =    if(edad p1 > edad p2)
                         then True
