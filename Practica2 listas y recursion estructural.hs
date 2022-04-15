@@ -240,6 +240,7 @@ trecko = Pk Planta 300
 
 --Entrenadores para probar
 red     = E "Red"  [charizard,lapras,gloom, vaporeon]
+green   = E "Green"[gloom, gloom, gloom]
 gary    = E "Gary"[trecko,vaporeon]
 misty   = E "Misty" [lapras,vaporeon]
 satoshi = E "Satoshi" [flareon]
@@ -274,16 +275,30 @@ unoSi False = 0
 -- Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo, que le ganarían
 -- a los Pokemon del segundo entrenador.
 losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int 
-losQueLeGanan tipo  (E n1 [])  (E n2 [])  =   0
-losQueLeGanan tipo  (E n1 (pk1:pks1)) (E n2 pks) = sumaSiTipoLeGanaA (tipoPokemon pk1) pks
+losQueLeGanan tipo (E n1 pokemones1) (E n2 pokemones2)     = cantidadDePokemonesQueLeGananA(filtrarPokemonsPorTipo tipo pokemones1) pokemones2
+                                                       
+filtrarPokemonsPorTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
+filtrarPokemonsPorTipo tipo []           =  []
+filtrarPokemonsPorTipo tipo (pk:pks)     =  if(esMismoTipo tipo (tipoPokemon pk))
+                                            then pk : filtrarPokemonsPorTipo tipo pks
+                                            else filtrarPokemonsPorTipo tipo pks
+
+cantidadDePokemonesQueLeGananA::[Pokemon] -> [Pokemon] -> Int
+cantidadDePokemonesQueLeGananA  []        pks2      =   0
+cantidadDePokemonesQueLeGananA (pk1:pks1) pks2      =  unoSi (pokemonQueSuperaA pk1 pks2 ) + 
+                                                       cantidadDePokemonesQueLeGananA pks1 pks2
 
 
-sumaSiTipoLeGanaA :: TipoDePokemon -> [Pokemon]  -> Int --suma 1 si el tipo es superior a algun tipo de pokemon de la lista
-sumaSiTipoLeGanaA tipo []          = 0
-sumaSiTipoLeGanaA tipo (p:pks)     =  if(elementoSuperiorA tipo (tipoPokemon p))
-                                      then (sumaSiTipoLeGanaA tipo pks) + 1
-                                      else sumaSiTipoLeGanaA tipo pks
-    --auxiliar practica 1
+pokemonQueSuperaA :: Pokemon -> [Pokemon]  -> Bool
+pokemonQueSuperaA pk []           =   True
+pokemonQueSuperaA pk (pk1:pks1)   =   superaA pk pk1  && 
+                                      pokemonQueSuperaA pk pks1  
+
+
+--     --auxiliar practica 1
+superaA :: Pokemon -> Pokemon -> Bool
+superaA (Pk t1 e1) (Pk t2 e2)    = elementoSuperiorA t1 t2
+
 elementoSuperiorA :: TipoDePokemon -> TipoDePokemon -> Bool
 elementoSuperiorA Agua  Fuego    = True
 elementoSuperiorA Fuego Planta   = True
