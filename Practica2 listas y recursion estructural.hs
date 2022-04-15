@@ -308,31 +308,39 @@ elementoSuperiorA _   _          = False
 --auxiliar
 tipoPokemon :: Pokemon -> TipoDePokemon
 tipoPokemon (Pk t _)    =   t
+
 esTipoDePokemon :: Pokemon -> TipoDePokemon -> Bool
 esTipoDePokemon (Pk t1 _) tipo  =   esMismoTipo tipo t1
-
--- esMaestroPokemon :: Entrenador -> Bool
--- Dado un entrenador, devuelve True si posee al menos un PokÃ©mon de cada tipo posible.
-
-esMaestroPokemon :: Entrenador -> Bool
-esMaestroPokemon (E _ (pk:pks)) = sonTodosLosTipos pks 
-
-sonTodosLosTipos :: [Pokemon]  -> Bool
-sonTodosLosTipos  []       = True
-sonTodosLosTipos  (pk:pks) = alMenosUnPokemonDeTipo [pk] (tipoPokemon pk)  && 
-                             sonTodosLosTipos  pks
-
-alMenosUnPokemonDeTipo :: [Pokemon] -> TipoDePokemon -> Bool
-alMenosUnPokemonDeTipo [] tipo       = False
-alMenosUnPokemonDeTipo (pk:pks) tipo = esTipoDePokemon pk tipo || 
-                                       alMenosUnPokemonDeTipo pks tipo
 
 esMismoTipo :: TipoDePokemon -> TipoDePokemon -> Bool
 esMismoTipo Fuego Fuego   = True
 esMismoTipo Agua Agua     = True
 esMismoTipo Planta Planta = True
 esMismoTipo _   _         = False
- 
+
+--Todos los tipos de pokemones
+todosLosTipos = [Agua,Fuego,Planta]
+
+-- esMaestroPokemon :: Entrenador -> Bool
+-- Dado un entrenador, devuelve True si posee al menos un PokÃ©mon de cada tipo posible.
+
+
+
+esMaestroPokemon :: Entrenador -> Bool
+esMaestroPokemon (E _ pokemones) = sonTodosLosTipos pokemones todosLosTipos
+
+sonTodosLosTipos :: [Pokemon] -> [TipoDePokemon]  -> Bool
+sonTodosLosTipos pks1   []        = True
+sonTodosLosTipos pks1 (pk2:pks2)  =  alMenosUnPokemonDeTipo pks1  pk2  && 
+                                     sonTodosLosTipos  pks1 pks2
+
+alMenosUnPokemonDeTipo :: [Pokemon] -> TipoDePokemon -> Bool
+alMenosUnPokemonDeTipo [] tipo       = False
+alMenosUnPokemonDeTipo (pk:pks) tipo = esTipoDePokemon pk tipo || 
+                                       alMenosUnPokemonDeTipo pks tipo
+
+
+
 
 -- 3. El tipo de dato Rol representa los roles (desarollo o management) de empleados IT dentro
 -- de una empresa de software, junto al proyecto en el que se encuentran. Así, una empresa es
