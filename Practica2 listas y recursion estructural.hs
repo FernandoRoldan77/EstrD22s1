@@ -260,11 +260,10 @@ contarPokemones (p:ps)  =   longitud (p:ps)
 -- cantipookemonDe :: TipoDePokemon -> Entrenador -> Int
 -- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
-cantidadDePokemonDe tipo (E _ [])       =   0
 cantidadDePokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
 
 contarPokemonesSegunTipo :: TipoDePokemon -> [Pokemon]  ->    Int
---contarPokemonesSegunTipo tipo []      =   0
+contarPokemonesSegunTipo tipo []      =   0
 contarPokemonesSegunTipo tipo (p:ps)  =   contarSiEsDeTipo tipo p + 
                                           contarPokemonesSegunTipo tipo ps
 --funciones practica 1
