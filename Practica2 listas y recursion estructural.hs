@@ -247,20 +247,16 @@ blaine  = E "Blaine" [flareon, charizard, flareon, flareon, flareon]
 maestro = E "Maestro"[charizard, gloom, lapras]
 -- Definir en base a esa representación las siguientes funciones:
 
--- cantipookemon :: Entrenador -> Int
+-- cantPokemon :: Entrenador -> Int
 -- Devuelve la cantidad de Pokémon que posee el entrenador.
-cantipookemon :: Entrenador -> Int
-cantipookemon (E _ [])       = 0     
-cantipookemon (E _ (p:ps))   = contarPokemones (p:ps)
+cantPokemon :: Entrenador -> Int
+cantPokemon (E _ [])       = 0     
+cantPokemon (E _ pokemones)   = longitud pokemones
 
-contarPokemones :: [Pokemon] -> Int
-contarPokemones []      =   0
-contarPokemones (p:ps)  =   longitud (p:ps)
-
--- cantipookemonDe :: TipoDePokemon -> Entrenador -> Int
+-- cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
 -- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
-cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
-cantidadDePokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
+cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantPokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
 
 contarPokemonesSegunTipo :: TipoDePokemon -> [Pokemon]  ->    Int
 contarPokemonesSegunTipo tipo []      =   0
