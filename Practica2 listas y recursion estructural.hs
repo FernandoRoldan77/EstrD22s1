@@ -434,12 +434,10 @@ cantQueTrabajanEn pys (ConsEmpresa rs) = cantidadDeRolesEnProyectos rs pys
 -- asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 -- Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su
 -- cantidad de personas involucradas.
+
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
-asignadosPorProyecto empresa = cantidadDeRolesPorProyectos empresa (sinRepetidos (proyectoDeRoles (rolesDeLaEmpresa empresa)))
+asignadosPorProyecto empresa  = contarEmpleadosPorProyecto empresa  (proyectos empresa)
 
-rolesDeLaEmpresa :: Empresa -> [Rol]
-rolesDeLaEmpresa (ConsEmpresa roles) = roles
-
-cantidadDeRolesPorProyectos :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
-cantidadDeRolesPorProyectos e []       = []
-cantidadDeRolesPorProyectos e (py:pys) = (py, cantQueTrabajanEn [py] e) : cantidadDeRolesPorProyectos e pys
+contarEmpleadosPorProyecto :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
+contarEmpleadosPorProyecto emp []       = []
+contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pys
