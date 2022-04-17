@@ -440,4 +440,4 @@ asignadosPorProyecto empresa  = contarEmpleadosPorProyecto empresa  (proyectos e
 
 contarEmpleadosPorProyecto :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
 contarEmpleadosPorProyecto emp []       = []
-contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pys
+contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pysD
