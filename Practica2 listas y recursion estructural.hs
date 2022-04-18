@@ -260,11 +260,9 @@ maestro = E "Maestro"[charizard, gloom, lapras]
 -- cantPokemon :: Entrenador -> Int
 -- Devuelve la cantidad de Pokémon que posee el entrenador.
 cantPokemon :: Entrenador -> Int
-cantPokemon (E _ [])       = 0     
 cantPokemon (E _ pokemones)   = longitud pokemones
 
--- cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
--- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
+
 cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
 cantPokemonDe tipo (E _ ps)   =  contarPokemonesSegunTipo tipo ps
 
@@ -272,6 +270,7 @@ contarPokemonesSegunTipo :: TipoDePokemon -> [Pokemon]  ->    Int
 contarPokemonesSegunTipo tipo []      =   0
 contarPokemonesSegunTipo tipo (p:ps)  =   contarSiEsDeTipo tipo p + 
                                           contarPokemonesSegunTipo tipo ps
+
 --funciones practica 1
 contarSiEsDeTipo :: TipoDePokemon -> Pokemon -> Int
 contarSiEsDeTipo tipoAContar (Pk t1 _) = unoSi(tipoAContar == t1)
@@ -279,6 +278,7 @@ contarSiEsDeTipo tipoAContar (Pk t1 _) = unoSi(tipoAContar == t1)
 unoSi:: Bool -> Int
 unoSi True =  1
 unoSi False = 0
+
 
 
 -- Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo, que le ganarían
