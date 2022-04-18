@@ -207,17 +207,26 @@ todasLasEdades (p:ps)   = edad p + todasLasEdades ps
 -- elMasViejo :: [Persona] -> Persona
 -- Dada una lista de personas devuelve la persona más vieja de la lista. Precondición: la
 -- lista al menos posee una persona.
+
+
+
 elMasViejo :: [Persona] -> Persona
-elMasViejo []          = error "Debe haber al menos una persona"
-elMasViejo (p:[])      = p
-elMasViejo (p:ps)      =  if (esMayorA p (elMasViejo ps))
-                          then p 
-                          else elMasViejo ps
+elMasViejo []            =   error "Debe haber al menos una persona"
+elMasViejo (p:[])        = p
+elMasViejo (p:ps)        = mayorEntre p ps
+
 
 esMayorA :: Persona -> Persona-> Bool
 esMayorA    p1  p2 =    if(edad p1 > edad p2)
                         then True
                         else False
+
+mayorEntre :: Persona -> [Persona] -> Persona
+mayorEntre p1 []         = p1
+mayorEntre p1 (p:ps)     = if (esMayorA p1 p)
+                          then mayorEntre p1 ps
+                          else mayorEntre p ps
+--siguienteSi (p:p1:[])  = p1
 
 -- 2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente
 -- manera:
@@ -440,4 +449,4 @@ asignadosPorProyecto empresa  = contarEmpleadosPorProyecto empresa  (proyectos e
 
 contarEmpleadosPorProyecto :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
 contarEmpleadosPorProyecto emp []       = []
-contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pysD
+contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pys
