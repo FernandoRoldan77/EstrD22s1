@@ -1,3 +1,4 @@
+
 -- 1. Tipos recursivos simples
 
 -- 1.1. Celdas con bolitas
@@ -11,12 +12,11 @@ data Celda = Bolita Color Celda |
 -- En dicha representación, la cantidad de apariciones de un determinado color denota la cantidad
 -- de bolitas de ese color en la celda. Por ejemplo, una celda con 2 bolitas azules y 2 rojas, podría
 -- ser la siguiente:
-
+sinBolitas    = CeldaVacia
 bolitaEjemplo = Bolita Rojo (Bolita Azul (Bolita Rojo (Bolita Azul CeldaVacia)))
-
 bolita1       = Bolita Rojo (Bolita Azul (Bolita Rojo (Bolita Azul CeldaVacia)))
 bolita2       = Bolita Rojo CeldaVacia
-bolita3       = Bolita Azul (Bolita Rojo (Bolita Azul (Bolita Rojo CeldaVacia)))
+bolita3       = Bolita Azul (Bolita Azul (Bolita Azul (Bolita Azul CeldaVacia)))
 
 -- Implementar las siguientes funciones sobre celdas:
 
@@ -24,15 +24,48 @@ bolita3       = Bolita Azul (Bolita Rojo (Bolita Azul (Bolita Rojo CeldaVacia)))
 -- Dados un color y una celda, indica la cantidad de bolitas de ese color. Nota: pensar si ya
 -- existe una operación sobre listas que ayude a resolver el problema.
 
+nroBolitas :: Color -> Celda -> Int
+nroBolitas colorAContar CeldaVacia        =   0
+nroBolitas colorAContar (Bolita color celda)   =   unoSi(esMismoColor colorAContar color) + 
+                                                   nroBolitas colorAContar celda
+
+
+esMismoColor :: Color -> Color -> Bool
+esMismoColor Azul Azul = True
+esMismoColor Rojo Rojo = True
+esMismoColor _  _      = False
+
+unoSi:: Bool -> Int
+unoSi True =  1
+unoSi False = 0
+
 -- poner :: Color -> Celda -> Celda
 -- Dado un color y una celda, agrega una bolita de dicho color a la celda.
+poner :: Color -> Celda -> Celda
+poner color CeldaVacia     = CeldaVacia
+poner colorAgregado (Bolita c celda) = (Bolita c (Bolita colorAgregado celda))
 
--- sacar :: Color -> Celda -> Celda
+
+--sacar :: Color -> Celda -> Celda
 -- Dado un color y una celda, quita una bolita de dicho color de la celda. Nota: a diferencia de
 -- Gobstones, esta función es total.
+sacar :: Color -> Celda -> Celda
+sacar colorASacar CeldaVacia        = CeldaVacia
+sacar colorASacar (Bolita c celda)  = if (esMismoColor colorASacar c)
+                                      then celda
+                                      else Bolita c (sacar colorASacar celda)
+
 
 -- ponerN :: Int -> Color -> Celda -> Celda
 -- Dado un número n, un color c, y una celda, agrega n bolitas de color c a la celda.
+
+ponerN :: Int -> Color -> Celda -> Celda
+ponerN n colorAPoner CeldaVacia           = agregarNBolitasEn n colorAPoner
+ponerN n colorAPoner (Bolita color celda) = Bolita color (ponerN n colorAPoner celda)
+
+agregarNBolitasEn :: Int -> Color -> Celda
+agregarNBolitasEn 0 _     = CeldaVacia
+agregarNBolitasEn n color = Bolita color (agregarNBolitasEn(n-1) color)
 
 -- 1.2. Camino hacia el tesoro
 -- Tenemos los siguientes tipos de datos
@@ -71,11 +104,44 @@ caminoCon1Tesoro =
 
 -- hayTesoro :: Camino -> Bool
 -- Indica si hay un cofre con un tesoro en el camino.
+hayTesoro :: Camino -> Bool
+hayTesoro   Fin                   = False
+hayTesoro (Cofre objetos camino)  = (tieneTesoro objetos)  ||  
+                                    hayTesoro  camino
+hayTesoro(Nada camino)            = hayTesoro camino
+
+
+tieneTesoro :: [Objeto] -> Bool
+tieneTesoro [] = False
+tieneTesoro (t:ts) = (esTesoro t ) || (tieneTesoro ts)
+
+esTesoro :: Objeto -> Bool                        
+esTesoro Tesoro   = True
+esTesoro  _       = False
 
 -- pasosHastaTesoro :: Camino -> Int
 -- Indica la cantidad de pasos que hay que recorrer hasta llegar al primer cofre con un tesoro.
 -- Si un cofre con un tesoro está al principio del camino, la cantidad de pasos a recorrer es 0.
 -- Precondición: tiene que haber al menos un tesoro.
+
+--revisar mañana
+
+pasosHastaTesoro :: Camino -> Int
+pasosHastaTesoro Fin                    = 0
+pasosHastaTesoro (Cofre objetos camino) =  contarSiHayTesoro camino + pasosHastaTesoro camino
+pasosHastaTesoro (Nada camino)          =  contarSiHayTesoro camino + pasosHastaTesoro Fin 
+
+contarSiHayTesoro :: Camino ->  Int
+contarSiHayTesoro Fin                      = 0
+contarSiHayTesoro (Cofre objetos camino)   = if (hayTesoro camino)
+                                             then contarSiHayTesoro Fin
+                                             else contarSiHayTesoro camino + 1
+
+contarSiHayTesoro (Nada camino)  = contarSiHayTesoro camino + 1
+
+-- data Objeto = Cacharro | Tesoro  deriving Show
+-- data Camino = Fin | Cofre [Objeto] Camino | Nada Camino deriving Show
+
 
 -- hayTesoroEn :: Int -> Camino -> Bool
 -- Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
@@ -87,7 +153,7 @@ caminoCon1Tesoro =
 -- (desafío) cantTesorosEntre :: Int -> Int -> Camino -> Int
 -- Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
 -- el rango es 3 y 5, indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están
--- incluidos tanto 3 como 5 en el resultado.
+-- incolorAContaruidos tanto 3 como 5 en el resultado.
 
 -- 2. Tipos arbóreos
 
@@ -154,10 +220,10 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
 -- 2.2. Expresiones Aritméticas
 -- El tipo algebraico ExpA modela expresiones aritméticas de la siguiente manera:
-data ExpA = Valor Int deriving Show
-| Sum ExpA ExpA
-| Prod ExpA ExpA
-| Neg ExpA
+data ExpA = Valor Int      | 
+            Sum ExpA ExpA  | 
+            Prod ExpA ExpA | 
+            Neg ExpA  deriving Show
 
 --Implementar las siguientes funciones utilizando el esquema de recursión estructural sobre Exp:
 -- 1. eval :: ExpA -> -> Int
