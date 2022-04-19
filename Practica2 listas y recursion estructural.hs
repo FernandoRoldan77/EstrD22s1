@@ -378,11 +378,11 @@ extraerNombre (ConsProyecto n) = n
 
 proyectoDeRoles :: [Rol] -> [Proyecto]
 proyectoDeRoles []     = []
-proyectoDeRoles (r:rs) = extraerProyectoDeRol r : proyectoDeRoles rs
+proyectoDeRoles (r:rs) = proyectoDeRol r : proyectoDeRoles rs
 
-extraerProyectoDeRol :: Rol -> Proyecto
-extraerProyectoDeRol (Developer _ p) = p
-extraerProyectoDeRol (Management _ p) = p
+proyectoDeRol :: Rol -> Proyecto
+proyectoDeRol (Developer _ p) = p
+proyectoDeRol (Management _ p) = p
 
 -- losDevSenior :: Empresa -> [Proyecto] -> Int
 -- Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen
@@ -435,8 +435,16 @@ cantQueTrabajanEn pys (ConsEmpresa rs) = cantidadDeRolesEnProyectos rs pys
 -- cantidad de personas involucradas.
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
-asignadosPorProyecto empresa  = contarEmpleadosPorProyecto empresa  (proyectos empresa)
+asignadosPorProyecto (ConsEmpresa roles)  = contarRolesDeProyecto roles
 
-contarEmpleadosPorProyecto :: Empresa -> [Proyecto] -> [(Proyecto, Int)]
-contarEmpleadosPorProyecto emp []       = []
-contarEmpleadosPorProyecto emp (py:pys) = (py, cantQueTrabajanEn(proyectos emp) emp) : contarEmpleadosPorProyecto emp pys
+contarRolesDeProyecto ::  [ Rol ] -> [ (Proyecto, Int ) ]
+contarRolesDeProyecto []     = []
+contarRolesDeProyecto (r:rs) = agregarProyecto (proyectoDeRol r) (contarRolesDeProyecto rs)
+
+agregarProyecto :: Proyecto -> [ (Proyecto,Int) ] -> [ (Proyecto ,Int) ]
+agregarProyecto py []               = (py, 0) : []
+agregarProyecto py ((py1,n) : pys1) = if (sonLosMismosProyectos py py1)
+                                      then (py1, n+1)   : pys1
+                                      else (py1, n )    : agregarProyecto py pys1
+
+
