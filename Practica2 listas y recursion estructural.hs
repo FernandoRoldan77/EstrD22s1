@@ -212,13 +212,17 @@ todasLasEdades (p:ps)   = edad p + todasLasEdades ps
 elMasViejo :: [Persona] -> Persona
 elMasViejo []            =   error "Debe haber al menos una persona"
 elMasViejo (p:[])        = p
-elMasViejo (p:ps)        = esMayorA p (elMasViejo ps)
+elMasViejo (p:ps)        = laMayorPersonaEntre p (elMasViejo ps)
 
 
-esMayorA :: Persona -> Persona-> Persona
-esMayorA    p1  p2 =  if(edad p1 > edad p2)
+laMayorPersonaEntre :: Persona -> Persona-> Persona
+laMayorPersonaEntre    p1  p2 =  if(edad p1 > edad p2)
                       then p1
                       else p2
+
+    --
+--Pero ahora no controla si es mayor, sino que devuelve al mayor, por lo que su nombre ya no es adecuado... :(
+
                         
 -- 2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente
 -- manera:
