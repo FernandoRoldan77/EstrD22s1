@@ -209,25 +209,17 @@ todasLasEdades (p:ps)   = edad p + todasLasEdades ps
 -- lista al menos posee una persona.
 
 
-
 elMasViejo :: [Persona] -> Persona
 elMasViejo []            =   error "Debe haber al menos una persona"
 elMasViejo (p:[])        = p
-elMasViejo (p:ps)        = mayorEntre p ps
+elMasViejo (p:ps)        = esMayorA p (elMasViejo ps)
 
 
-esMayorA :: Persona -> Persona-> Bool
-esMayorA    p1  p2 =    if(edad p1 > edad p2)
-                        then True
-                        else False
-
-mayorEntre :: Persona -> [Persona] -> Persona
-mayorEntre p1 []         = p1
-mayorEntre p1 (p:ps)     = if (esMayorA p1 p)
-                          then mayorEntre p1 ps
-                          else mayorEntre p ps
---siguienteSi (p:p1:[])  = p1
-
+esMayorA :: Persona -> Persona-> Persona
+esMayorA    p1  p2 =  if(edad p1 > edad p2)
+                      then p1
+                      else p2
+                        
 -- 2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente
 -- manera:
 -- data TipoDePokemon = Agua | Fuego | Planta
@@ -332,8 +324,6 @@ todosLosTipos = [Agua,Fuego,Planta]
 
 -- esMaestroPokemon :: Entrenador -> Bool
 -- Dado un entrenador, devuelve True si posee al menos un PokÃ©mon de cada tipo posible.
-
-
 
 esMaestroPokemon :: Entrenador -> Bool
 esMaestroPokemon (E _ pokemones) = sonTodosLosTipos pokemones todosLosTipos

@@ -42,7 +42,7 @@ unoSi False = 0
 -- poner :: Color -> Celda -> Celda
 -- Dado un color y una celda, agrega una bolita de dicho color a la celda.
 poner :: Color -> Celda -> Celda
-poner color CeldaVacia     = CeldaVacia
+poner color CeldaVacia               = (Bolita color CeldaVacia)
 poner colorAgregado (Bolita c celda) = (Bolita c (Bolita colorAgregado celda))
 
 
@@ -106,8 +106,7 @@ caminoCon1Tesoro =
 -- Indica si hay un cofre con un tesoro en el camino.
 hayTesoro :: Camino -> Bool
 hayTesoro   Fin                   = False
-hayTesoro (Cofre objetos camino)  = (tieneTesoro objetos)  ||  
-                                    hayTesoro  camino
+hayTesoro (Cofre objetos camino)  = (tieneTesoro objetos)  || hayTesoro  camino
 hayTesoro(Nada camino)            = hayTesoro camino
 
 
@@ -124,31 +123,51 @@ esTesoro  _       = False
 -- Si un cofre con un tesoro está al principio del camino, la cantidad de pasos a recorrer es 0.
 -- Precondición: tiene que haber al menos un tesoro.
 
---revisar mañana
 
 pasosHastaTesoro :: Camino -> Int
 pasosHastaTesoro Fin                    = 0
-pasosHastaTesoro (Cofre objetos camino) =  contarSiHayTesoro camino + pasosHastaTesoro camino
-pasosHastaTesoro (Nada camino)          =  contarSiHayTesoro camino + pasosHastaTesoro Fin 
+pasosHastaTesoro (Cofre objetos camino) =   if (tieneTesoro objetos)
+                                            then pasosHastaTesoro Fin
+                                            else pasosHastaTesoro camino + 1
 
-contarSiHayTesoro :: Camino ->  Int
-contarSiHayTesoro Fin                      = 0
-contarSiHayTesoro (Cofre objetos camino)   = if (hayTesoro camino)
-                                             then contarSiHayTesoro Fin
-                                             else contarSiHayTesoro camino + 1
-
-contarSiHayTesoro (Nada camino)  = contarSiHayTesoro camino + 1
-
--- data Objeto = Cacharro | Tesoro  deriving Show
--- data Camino = Fin | Cofre [Objeto] Camino | Nada Camino deriving Show
+pasosHastaTesoro (Nada camino)          =   pasosHastaTesoro camino  + 1 
 
 
 -- hayTesoroEn :: Int -> Camino -> Bool
 -- Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
 -- pasos es 5, indica si hay un tesoro en 5 pasos.
 
+hayTesoroEn :: Int -> Camino  -> Bool
+hayTesoroEn   0  Fin                    = False
+hayTesoroEn   n  Fin                    = True
+hayTesoroEn   n (Cofre objetos camino)  = if (esTesoroEnPasos (pasosHastaTesoro camino) n)
+                                          then hayTesoroEn n Fin
+                                          else hayTesoroEn (n-1) camino
+
+hayTesoroEn   n (Nada camino)           = hayTesoroEn n camino
+
+esTesoroEnPasos :: Int -> Int -> Bool
+esTesoroEnPasos n1 n2  = if (n1 == n2)
+                         then True
+                         else False 
+
 -- alMenosNTesoros :: Int -> Camino -> Bool
 -- Indica si hay al menos “n” tesoros en el camino.
+alMenosNTesoros :: Int -> Camino -> Bool
+alMenosNTesoros 0 Fin                     = False
+
+alMenosNTesoros n (Cofre objetos camino)  = darPasosYVerSiHayTesoro n camino || alMenosNTesoros (n-1) camino
+alMenosNTesoros n (Nada camino)           = darPasosYVerSiHayTesoro n camino || alMenosNTesoros (n-1) camino  
+
+-- ver mañana
+darPasosYVerSiHayTesoro :: Int -> Camino -> Bool
+darPasosYVerSiHayTesoro 0 Fin                     = False
+darPasosYVerSiHayTesoro n Fin                     = True
+darPasosYVerSiHayTesoro n (Cofre objetos camino)  = if (tieneTesoro objetos)
+                                                    then darPasosYVerSiHayTesoro n Fin 
+                                                    else darPasosYVerSiHayTesoro (n-1) camino
+
+darPasosYVerSiHayTesoro n (Nada camino)           = darPasosYVerSiHayTesoro n camino
 
 -- (desafío) cantTesorosEntre :: Int -> Int -> Camino -> Int
 -- Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
@@ -161,6 +180,27 @@ contarSiHayTesoro (Nada camino)  = contarSiHayTesoro camino + 1
 -- Dada esta definición para árboles binarios
 
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
+
+-- tree1 :: Tree Int
+-- tree1 = 
+--     NodeT 10 
+--       (NodeT 10
+--             (NodeT 10 EmptyT EmptyT) 
+--             (NodeT 10 EmptyT EmptyT))
+--       (NodeT 20 
+--                (NodeT 20 EmptyT EmptyT)
+--                (NodeT 20 EmptyT EmptyT))
+
+-- treeConRamaLarga :: Tree Int
+-- treeConRamaLarga = 
+--     NodeT 1 
+--       (NodeT 2
+--             (NodeT 4 EmptyT EmptyT) 
+--             (NodeT 5 EmptyT EmptyT))
+--       (NodeT 3 
+--                (NodeT 6 EmptyT EmptyT)
+--                (NodeT 7 EmptyT EmptyT))
+
 
 -- defina las siguientes funciones utilizando recursión estructural según corresponda:
 
