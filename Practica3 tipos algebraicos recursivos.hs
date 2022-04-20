@@ -153,26 +153,25 @@ seEncontroTesoro (Cofre objetos _ )  = tieneTesoro objetos
 seEncontroTesoro (Nada camino)       = False
 
 
------- intento de solucion  ----
--- alMenosNTesoros :: Int -> Camino -> Bool
--- Indica si hay al menos “n” tesoros en el camino.
--- alMenosNTesoros :: Int -> Camino -> Bool
--- alMenosNTesoros 0 Fin                     = False
--- alMenosNTesoros n (Cofre objetos camino)  = alMenosNTesoros (contarSiHayTesoro n camino) camino
--- alMenosNTesoros n (Nada camino)           = alMenosNTesoros (contarSiHayTesoro (n-1) camino ) camino
+alMenosNTesoros :: Int -> Camino -> Bool
+alMenosNTesoros 0 _             = True 
+alMenosNTesoros n Fin           = False
+alMenosNTesoros n camino        = alMenosNTesoros (contarSiHayTesoros n  camino) (elCaminoQueSigue camino)
 
+contarSiHayTesoros ::  Int -> Camino -> Int      
+contarSiHayTesoros n  (Cofre objetos camino) = let contadorTesoros = (n - cantidadDeTesoros objetos) in  --No se me ocurre como calcularlo de otra manera
+                                               if (contadorTesoros < 0)
+                                               then  0
+                                               else  contadorTesoros
+contarSiHayTesoros n           _             = n
 
--- contarSiHayTesoro :: Int -> Camino -> Int
--- contarSiHayTesoro _  Fin                    = 0
--- contarSiHayTesoro n (Cofre objetos camino)  = if (seEncontroTesoro camino)
---                                               then (contarSiHayTesoro  n + 1) camino
---                                               else (contarSiHayTesoro n   camino)
-
--- contarSiHayTesoro n (Nada camino)           = contarSiHayTesoro n camino
+cantidadDeTesoros :: [Objeto] -> Int
+cantidadDeTesoros []     = 0
+cantidadDeTesoros (x:xs) = unoSi (esTesoro x) + cantidadDeTesoros xs
 
  -- Indica si hay al menos “n” tesoros en el camino.
 
--- (desafío) cantTesorosEntre :: Int -> Int -> Camino -> Int
+-- (desafío) cantidadDeTesorostre :: Int -> Int -> Camino -> Int
 -- Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
 -- el rango es 3 y 5, indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están
 -- incolorAContaruidos tanto 3 como 5 en el resultado.
@@ -186,13 +185,13 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
 tree1 :: Tree Int
 tree1 = 
-    NodeT 10 
+    NodeT 1
       (NodeT 10
-            (NodeT 10 EmptyT EmptyT) 
-            (NodeT 10 EmptyT EmptyT))
-      (NodeT 20 
-               (NodeT 20 EmptyT EmptyT)
-               (NodeT 20 EmptyT EmptyT))
+            (NodeT 20 EmptyT EmptyT) 
+            (NodeT 30 EmptyT EmptyT))
+      (NodeT 40
+               (NodeT 50 EmptyT EmptyT)
+               (NodeT 60 EmptyT EmptyT))
 
 
 treeConRamaLarga :: Tree Int
@@ -205,7 +204,32 @@ treeConRamaLarga =
                (NodeT 6 EmptyT EmptyT)
                (NodeT 7 EmptyT EmptyT))
 
--- data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
+tree2 :: Tree Int
+tree2 = NodeT 1 
+      (NodeT 2 
+        (NodeT 4
+          (NodeT  8 (NodeT 16 EmptyT EmptyT)
+                    (NodeT 17 EmptyT EmptyT))
+          (NodeT  9 (NodeT 18 EmptyT EmptyT)
+                    (NodeT 19 EmptyT EmptyT)))
+        (NodeT 5
+          (NodeT 10 (NodeT 20 EmptyT EmptyT)
+                    (NodeT 21 EmptyT EmptyT))
+          (NodeT 11 (NodeT 22 EmptyT EmptyT)
+                    (NodeT 23 EmptyT EmptyT))))
+      (NodeT 3 
+        (NodeT 6
+          (NodeT 12 (NodeT 24 EmptyT EmptyT)
+                    (NodeT 25 EmptyT EmptyT))
+          (NodeT 13 (NodeT 26 EmptyT EmptyT)
+                    (NodeT 27 EmptyT EmptyT)))
+        (NodeT 7
+          (NodeT 14 (NodeT 28 EmptyT EmptyT)
+                    (NodeT 29 EmptyT EmptyT))
+          (NodeT 15 (NodeT 30 EmptyT EmptyT)
+                    (NodeT 31 EmptyT EmptyT))))
+
+
 
 -- defina las siguientes funciones utilizando recursión estructural según corresponda:
 
@@ -266,17 +290,27 @@ heightT (NodeT a ti td)   =  1 + (heightT ti) + (heightT td)
 -- 8. mirrorT :: Tree a -> Tree a
 -- Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho,
 -- en cada nodo del árbol.
+mirrorT :: Tree a -> Tree a
+mirrorT EmptyT            = EmptyT
+mirrorT (NodeT a ti td)   =  (NodeT a  (mirrorT td) (mirrorT ti))
 
 -- 9. toList :: Tree a -> [a]
 -- Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
 -- Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz
 -- y luego los elementos del hijo derecho.
+toList :: Tree a -> [a]
+toList EmptyT             = []
+toList (NodeT a ti td)    = (toList ti) ++[a] ++ (toList td)
 
 -- 10. levelN :: Int -> Tree a -> [a]
 -- Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
 -- nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la
 -- distancia de la raiz a uno de sus hijos es 1.
 -- Nota: El primer nivel de un árbol (su raíz) es 0.
+levelN :: Int -> Tree a -> [a]
+levelN _ EmptyT            = []
+levelN 0 (NodeT  a _ _)    = a : []
+levelN n (NodeT _ ti td)   = levelN (n-1) ti ++ levelN (n-1) td
 
 -- 11. listPerLevel :: Tree a -> [[a]]
 -- Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de
