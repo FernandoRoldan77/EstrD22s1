@@ -170,6 +170,8 @@ seEncontroTesoro (Nada camino)       = False
 
 -- contarSiHayTesoro n (Nada camino)           = contarSiHayTesoro n camino
 
+ -- Indica si hay al menos “n” tesoros en el camino.
+
 -- (desafío) cantTesorosEntre :: Int -> Int -> Camino -> Int
 -- Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
 -- el rango es 3 y 5, indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están

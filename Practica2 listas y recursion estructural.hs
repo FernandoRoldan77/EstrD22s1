@@ -446,7 +446,7 @@ contarRolesDeProyecto []     = []
 contarRolesDeProyecto (r:rs) = agregarProyecto (proyectoDeRol r) (contarRolesDeProyecto rs)
 
 agregarProyecto :: Proyecto -> [ (Proyecto,Int) ] -> [ (Proyecto ,Int) ]
-agregarProyecto py []               = (py, 0) : []
+agregarProyecto py []               = (py, 1) : []
 agregarProyecto py ((py1,n) : pys1) = if (sonLosMismosProyectos py py1)
                                       then (py1, n+1)   : pys1
                                       else (py1, n )    : agregarProyecto py pys1
