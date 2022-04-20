@@ -138,36 +138,37 @@ pasosHastaTesoro (Nada camino)          =   pasosHastaTesoro camino  + 1
 -- pasos es 5, indica si hay un tesoro en 5 pasos.
 
 hayTesoroEn :: Int -> Camino  -> Bool
-hayTesoroEn   0  Fin                    = False
-hayTesoroEn   n  Fin                    = True
-hayTesoroEn   n (Cofre objetos camino)  = if (esTesoroEnPasos (pasosHastaTesoro camino) n)
-                                          then hayTesoroEn n Fin
-                                          else hayTesoroEn (n-1) camino
+hayTesoroEn   n  Fin         = False
+hayTesoroEn   0 camino       = seEncontroTesoro camino
+hayTesoroEn   n camino       = hayTesoroEn (n-1) (elCaminoQueSigue camino)
 
-hayTesoroEn   n (Nada camino)           = hayTesoroEn n camino
+elCaminoQueSigue :: Camino -> Camino
+elCaminoQueSigue Fin              = Fin       
+elCaminoQueSigue (Cofre _ camino) = camino
+elCaminoQueSigue (Nada camino)    = camino
 
-esTesoroEnPasos :: Int -> Int -> Bool
-esTesoroEnPasos n1 n2  = if (n1 == n2)
-                         then True
-                         else False 
+seEncontroTesoro :: Camino -> Bool
+seEncontroTesoro Fin                 = False
+seEncontroTesoro (Cofre objetos _ )  = tieneTesoro objetos
+seEncontroTesoro (Nada camino)       = False
 
+
+------ intento de solucion  ----
 -- alMenosNTesoros :: Int -> Camino -> Bool
 -- Indica si hay al menos “n” tesoros en el camino.
-alMenosNTesoros :: Int -> Camino -> Bool
-alMenosNTesoros 0 Fin                     = False
+-- alMenosNTesoros :: Int -> Camino -> Bool
+-- alMenosNTesoros 0 Fin                     = False
+-- alMenosNTesoros n (Cofre objetos camino)  = alMenosNTesoros (contarSiHayTesoro n camino) camino
+-- alMenosNTesoros n (Nada camino)           = alMenosNTesoros (contarSiHayTesoro (n-1) camino ) camino
 
-alMenosNTesoros n (Cofre objetos camino)  = darPasosYVerSiHayTesoro n camino || alMenosNTesoros (n-1) camino
-alMenosNTesoros n (Nada camino)           = darPasosYVerSiHayTesoro n camino || alMenosNTesoros (n-1) camino  
 
--- ver mañana
-darPasosYVerSiHayTesoro :: Int -> Camino -> Bool
-darPasosYVerSiHayTesoro 0 Fin                     = False
-darPasosYVerSiHayTesoro n Fin                     = True
-darPasosYVerSiHayTesoro n (Cofre objetos camino)  = if (tieneTesoro objetos)
-                                                    then darPasosYVerSiHayTesoro n Fin 
-                                                    else darPasosYVerSiHayTesoro (n-1) camino
+-- contarSiHayTesoro :: Int -> Camino -> Int
+-- contarSiHayTesoro _  Fin                    = 0
+-- contarSiHayTesoro n (Cofre objetos camino)  = if (seEncontroTesoro camino)
+--                                               then (contarSiHayTesoro  n + 1) camino
+--                                               else (contarSiHayTesoro n   camino)
 
-darPasosYVerSiHayTesoro n (Nada camino)           = darPasosYVerSiHayTesoro n camino
+-- contarSiHayTesoro n (Nada camino)           = contarSiHayTesoro n camino
 
 -- (desafío) cantTesorosEntre :: Int -> Int -> Camino -> Int
 -- Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
@@ -181,55 +182,84 @@ darPasosYVerSiHayTesoro n (Nada camino)           = darPasosYVerSiHayTesoro n ca
 
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
--- tree1 :: Tree Int
--- tree1 = 
---     NodeT 10 
---       (NodeT 10
---             (NodeT 10 EmptyT EmptyT) 
---             (NodeT 10 EmptyT EmptyT))
---       (NodeT 20 
---                (NodeT 20 EmptyT EmptyT)
---                (NodeT 20 EmptyT EmptyT))
+tree1 :: Tree Int
+tree1 = 
+    NodeT 10 
+      (NodeT 10
+            (NodeT 10 EmptyT EmptyT) 
+            (NodeT 10 EmptyT EmptyT))
+      (NodeT 20 
+               (NodeT 20 EmptyT EmptyT)
+               (NodeT 20 EmptyT EmptyT))
 
--- treeConRamaLarga :: Tree Int
--- treeConRamaLarga = 
---     NodeT 1 
---       (NodeT 2
---             (NodeT 4 EmptyT EmptyT) 
---             (NodeT 5 EmptyT EmptyT))
---       (NodeT 3 
---                (NodeT 6 EmptyT EmptyT)
---                (NodeT 7 EmptyT EmptyT))
 
+treeConRamaLarga :: Tree Int
+treeConRamaLarga = 
+    NodeT 1 
+      (NodeT 2
+            (NodeT 4 EmptyT EmptyT) 
+            (NodeT 5 EmptyT EmptyT))
+      (NodeT 3 
+               (NodeT 6 EmptyT EmptyT)
+               (NodeT 7 EmptyT EmptyT))
+
+-- data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
 -- defina las siguientes funciones utilizando recursión estructural según corresponda:
 
 -- 1. sumarT :: Tree Int -> Int
 -- Dado un árbol binario de enteros devuelve la suma entre sus elementos.
+sumarT :: Tree Int -> Int
+sumarT EmptyT           = 0
+sumarT (NodeT n t1 t2)   =  n + (sumarT t1) + (sumarT t2)
 
 -- 2. sizeT :: Tree a -> Int
 -- Dado un árbol binario devuelve su cantidad de elementos, es decir, el tamaño del árbol (size
 -- en inglés).
+sizeT :: Tree a -> Int
+sizeT EmptyT          = 0
+sizeT (NodeT a t1 t2) = 1 + (sizeT t1) + (sizeT t2)  
 
 -- 3. mapDobleT :: Tree Int -> Tree Int
 -- Dado un árbol de enteros devuelve un árbol con el doble de cada número.
+mapDobleT :: Tree Int -> Tree Int
+mapDobleT EmptyT          = EmptyT
+mapDobleT (NodeT n t1 t2)  = NodeT (n*2) (mapDobleT t1) (mapDobleT t2 )
 
 -- 4. perteneceT :: Eq a => a -> Tree a -> Bool
 -- Dados un elemento y un árbol binario devuelve True si existe un elemento igual a ese en el
 -- árbol.
+perteneceT  :: Eq a => a -> Tree a -> Bool
+perteneceT e   EmptyT            = False
+perteneceT e  (NodeT a t1 t2)   =  (sonMismosElementos e a) || (perteneceT e t1) || (perteneceT e t2) 
+
+sonMismosElementos :: Eq a => a -> a -> Bool
+sonMismosElementos a e   = a == e
 
 -- 5. aparicionesT :: Eq a => a -> Tree a -> Int
 -- Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son
 -- iguales a e.
+aparicionesT :: Eq a => a -> Tree a -> Int
+aparicionesT _ EmptyT          = 0
+aparicionesT a (NodeT n ti td) = ( sumarSiSonIguales a n) + (aparicionesT a ti) + (aparicionesT a td) 
 
+sumarSiSonIguales :: Eq a => a -> a -> Int
+sumarSiSonIguales a e   =   unoSi (sonMismosElementos a e) 
+                             
 -- 6. leaves :: Tree a -> [a]
 -- Dado un árbol devuelve los elementos que se encuentran en sus hojas.
+leaves :: Tree a -> [a]
+leaves  EmptyT            = []
+leaves (NodeT a ti td)    = [a] ++ (leaves ti) ++ (leaves  td)
 
 -- 7. heightT :: Tree a -> Int
 -- Dado un árbol devuelve su altura.
-
 -- Nota: la altura de un árbol (height en inglés), también llamada profundidad, es la cantidad
 -- de niveles del árbol1. La altura para EmptyT es 0, y para una hoja es 1.
+heightT :: Tree a -> Int
+heightT EmptyT            =  0
+heightT (NodeT a ti td)   =  1 + (heightT ti) + (heightT td)
+
 
 -- 8. mirrorT :: Tree a -> Tree a
 -- Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho,
@@ -282,4 +312,3 @@ data ExpA = Valor Int      |
 -- raíz a su hoja más lejana. Por distancia entendemos la cantidad de nodos que hay en dicho camino. En este caso
 -- las hojas tendrían altura 0, porque la distancia del camino a sí mismos lo es. Se suele utilizar más en árboles que
 -- no poseen un constructor vacío.
--- Página 3 de 3
