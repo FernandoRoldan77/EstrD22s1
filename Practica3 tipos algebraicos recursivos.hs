@@ -280,7 +280,7 @@ leaves (NodeT a ti td)    = [a] ++ (leaves ti) ++ (leaves  td)
 -- de niveles del árbol1. La altura para EmptyT es 0, y para una hoja es 1.
 heightT :: Tree a -> Int
 heightT EmptyT            =  0
-heightT (NodeT a ti td)   =  1 + (heightT ti) + (heightT td)
+heightT (NodeT a ti td)   =  1 + max  (heightT ti)  (heightT td) 
 
 
 -- 8. mirrorT :: Tree a -> Tree a
