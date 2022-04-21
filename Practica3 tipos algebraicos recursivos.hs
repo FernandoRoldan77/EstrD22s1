@@ -58,12 +58,10 @@ sacar colorASacar (Bolita c celda)  = if (esMismoColor colorASacar c)
 -- Dado un número n, un color c, y una celda, agrega n bolitas de color c a la celda.
 
 ponerN :: Int -> Color -> Celda -> Celda
-ponerN n colorAPoner CeldaVacia           = agregarNBolitasEn n colorAPoner
-ponerN n colorAPoner (Bolita color celda) = Bolita color (ponerN n colorAPoner celda)
+ponerN 0 _ celda  =  celda
+ponerN n colorAPoner celda  = poner  colorAPoner (ponerN (n-1) colorAPoner celda) 
 
-agregarNBolitasEn :: Int -> Color -> Celda
-agregarNBolitasEn 0 _     = CeldaVacia
-agregarNBolitasEn n color = Bolita color (agregarNBolitasEn(n-1) color)
+
 
 -- 1.2. Camino hacia el tesoro
 -- Tenemos los siguientes tipos de datos
