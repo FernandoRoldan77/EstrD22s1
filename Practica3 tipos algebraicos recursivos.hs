@@ -253,10 +253,8 @@ mapDobleT (NodeT n t1 t2)  = NodeT (n*2) (mapDobleT t1) (mapDobleT t2 )
 -- árbol.
 perteneceT  :: Eq a => a -> Tree a -> Bool
 perteneceT e   EmptyT            = False
-perteneceT e  (NodeT a t1 t2)   =  (sonMismosElementos e a) || (perteneceT e t1) || (perteneceT e t2) 
+perteneceT e  (NodeT a t1 t2)   =  (a == e) || (perteneceT e t1) || (perteneceT e t2) 
 
-sonMismosElementos :: Eq a => a -> a -> Bool
-sonMismosElementos a e   = a == e
 
 -- 5. aparicionesT :: Eq a => a -> Tree a -> Int
 -- Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son
@@ -266,7 +264,7 @@ aparicionesT _ EmptyT          = 0
 aparicionesT a (NodeT n ti td) = ( sumarSiSonIguales a n) + (aparicionesT a ti) + (aparicionesT a td) 
 
 sumarSiSonIguales :: Eq a => a -> a -> Int
-sumarSiSonIguales a e   =   unoSi (sonMismosElementos a e) 
+sumarSiSonIguales a e   =   unoSi (a == e) 
                              
 -- 6. leaves :: Tree a -> [a]
 -- Dado un árbol devuelve los elementos que se encuentran en sus hojas.
