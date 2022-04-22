@@ -188,6 +188,7 @@ tree1 =
       (NodeT 40
                (NodeT 50 EmptyT EmptyT)
                (NodeT 60 EmptyT EmptyT))
+               
 
 
 treeConRamaLarga :: Tree Int
@@ -199,6 +200,7 @@ treeConRamaLarga =
       (NodeT 3 
                (NodeT 6 EmptyT EmptyT)
                (NodeT 7 EmptyT EmptyT))
+    
 
 tree2 :: Tree Int
 tree2 = NodeT 1 
@@ -317,12 +319,38 @@ levelN n (NodeT _ ti td)   = levelN (n-1) ti ++ levelN (n-1) td
 -- 11. listPerLevel :: Tree a -> [[a]]
 -- Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de
 -- dicho árbol.
+listPerLevel :: Tree a -> [[a]]
+listPerLevel  EmptyT          = []
+listPerLevel (NodeT a ti td)  =  [a] :  juntarNiveles  (listPerLevel ti)  (listPerLevel td)  
+
+juntarNiveles :: [[a]] -> [[a]] -> [[a]]
+juntarNiveles   []      yss       = yss
+juntarNiveles   xss  []           = xss
+juntarNiveles  (xs:xss) (ys:yss)  =  (xs ++ ys) : juntarNiveles xss yss
 
 -- 12. ramaMasLarga :: Tree a -> [a]
 -- Devuelve los elementos de la rama más larga del árbol
+ramaMasLarga :: Tree a -> [a]
+ramaMasLarga  EmptyT          = []
+ramaMasLarga  (NodeT a ti td) =  a :  quienTieneLaRamaMasLarga (ramaMasLarga ti) (ramaMasLarga td)
+                                
 
+quienTieneLaRamaMasLarga :: [a]-> [a]  -> [a]
+quienTieneLaRamaMasLarga a1 a2  = if (length a1 > length a2)
+                                  then a1
+                                  else a2
+ 
 -- 13. todosLosCaminos :: Tree a -> [[a]]
 -- Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raiz hasta las hojas.
+
+todosLosCaminos :: Tree a  -> [[a]]
+todosLosCaminos EmptyT            = []
+todosLosCaminos (NodeT a ti td)   = [a] : agregarCadaCamino a (todosLosCaminos ti) ++ 
+                                          agregarCadaCamino a (todosLosCaminos td)
+
+agregarCadaCamino :: a -> [[a]] -> [[a]]
+agregarCadaCamino x []       = []
+agregarCadaCamino x (xs:xss) = (x:xs) : agregarCadaCamino x xss
 
 
 
