@@ -364,6 +364,13 @@ data ExpA = Valor Int      |
 --Implementar las siguientes funciones utilizando el esquema de recursión estructural sobre Exp:
 -- 1. eval :: ExpA -> -> Int
 -- Dada una expresión aritmética devuelve el resultado evaluarla.
+eval :: ExpA -> Int
+eval (Valor n)        = n
+eval (Sum expA expB)  = eval expA + eval expB
+eval (Prod expA expB) = eval expA + eval expB
+eval (Neg expA)       = eval expA * (-1)
+ 
+
 
 -- 2. simplificar :: ExpA -> ExpA
 -- Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando
@@ -373,6 +380,7 @@ data ExpA = Valor Int      |
 -- b) 0 * x = x * 0 = 0
 -- c) 1 * x = x * 1 = x
 -- d) - (- x) = x
+
 
 -- 1También existen otras definiciones posibles. Por ejemplo, puede definirse como la distancia del camino desde la
 -- raíz a su hoja más lejana. Por distancia entendemos la cantidad de nodos que hay en dicho camino. En este caso
