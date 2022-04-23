@@ -121,12 +121,18 @@ esTesoro  _       = False
 
 
 pasosHastaTesoro :: Camino -> Int
-pasosHastaTesoro Fin                    = 0
+pasosHastaTesoro Fin                    =   alMenosUnTesoro Fin
 pasosHastaTesoro (Cofre objetos camino) =   if (tieneTesoro objetos)
-                                            then pasosHastaTesoro Fin
+                                            then 0
                                             else pasosHastaTesoro camino + 1
 
 pasosHastaTesoro (Nada camino)          =   pasosHastaTesoro camino  + 1 
+
+
+alMenosUnTesoro :: Camino -> Int
+alMenosUnTesoro camino  = if (hayTesoro camino)
+                          then 0
+                          else error "Debe haber al menos un tesoro" 
 
 
 -- hayTesoroEn :: Int -> Camino -> Bool
@@ -367,9 +373,8 @@ data ExpA = Valor Int      |
 eval :: ExpA -> Int
 eval (Valor n)        = n
 eval (Sum expA expB)  = eval expA + eval expB
-eval (Prod expA expB) = eval expA + eval expB
+eval (Prod expA expB) = eval expA * eval expB
 eval (Neg expA)       = eval expA * (-1)
- 
 
 
 -- 2. simplificar :: ExpA -> ExpA
@@ -381,6 +386,39 @@ eval (Neg expA)       = eval expA * (-1)
 -- c) 1 * x = x * 1 = x
 -- d) - (- x) = x
 
+-- simplificar :: ExpA -> ExpA
+-- simplificar (Valor n)              = expA
+-- simplificar (Valor expaA)     = expA   simplificar expA
+-- simplificar (Sum Valor expA)  = simplificar
+-- simplificar (Sum expA expB)   = simplificar expA (eval expB)
+
+suma1 = (Sum (Valor 10) (Valor 0))
+producto1 = (Prod (Valor 10) (Valor 0))
+
+-- simplificar :: ExpA -> ExpA
+-- simplificar (Valor n)    = Valor n
+-- simplificar (Sum e1 e2)  = simplificarSi (simplificar e1) (simplificar e2)
+-- simplificar (Prod e1 e2) = simplificarSi (simplificar e1) (simplificar e2)
+-- simplificar (Neg e)      = simplificarSi (simplificar e) (simplificar e)
+
+
+-- simplificarSi :: ExpA -> ExpA -> ExpA
+-- simplificarSi (Valor 0) e   = e
+-- simplificarSi e (Valor 0)   = e
+-- simplificarSi e1 e2         = Sum e1 e2
+-- simplificarSi (Valor 0) e   = Valor 0
+-- simplificarSi e (Valor 0)   = Valor 0 
+-- simplificarSi (Valor 1) e   = e
+-- simplificarSi e (Valor 1)   = e
+-- simplificarSi e1 e2         = Prod e1 e2
+-- simplificarSi (Neg e)       = negate e
+ 
+
+
+
+
+-- simplificarSi (Neg(Neg x))) = xs
+-- simplificarSi e1            = e
 
 -- 1También existen otras definiciones posibles. Por ejemplo, puede definirse como la distancia del camino desde la
 -- raíz a su hoja más lejana. Por distancia entendemos la cantidad de nodos que hay en dicho camino. En este caso
