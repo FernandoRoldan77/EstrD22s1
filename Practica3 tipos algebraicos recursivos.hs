@@ -140,19 +140,15 @@ alMenosUnTesoro camino  = if (hayTesoro camino)
 -- pasos es 5, indica si hay un tesoro en 5 pasos.
 
 hayTesoroEn :: Int -> Camino  -> Bool
-hayTesoroEn   n  Fin         = False
-hayTesoroEn   0 camino       = seEncontroTesoro camino
-hayTesoroEn   n camino       = hayTesoroEn (n-1) (elCaminoQueSigue camino)
+hayTesoroEn 0 camino                    = seEncontroTesoroEnCamino camino
+hayTesoroEn   _  Fin                    = False
+hayTesoroEn   n (Cofre objetos camino)  = hayTesoroEn (n-1) camino
+hayTesoroEn   n (Nada camino)           = hayTesoroEn (n-1) camino
 
-elCaminoQueSigue :: Camino -> Camino
-elCaminoQueSigue Fin              = Fin       
-elCaminoQueSigue (Cofre _ camino) = camino
-elCaminoQueSigue (Nada camino)    = camino
+seEncontroTesoroEnCamino :: Camino -> Bool
 
-seEncontroTesoro :: Camino -> Bool
-seEncontroTesoro Fin                 = False
-seEncontroTesoro (Cofre objetos _ )  = tieneTesoro objetos
-seEncontroTesoro (Nada camino)       = False
+seEncontroTesoroEnCamino (Cofre objetos _ )  = tieneTesoro objetos
+seEncontroTesoroEnCamino _                   = False
 
 
 alMenosNTesoros :: Int -> Camino -> Bool
@@ -170,6 +166,11 @@ contarSiHayTesoros n           _             = n
 cantidadDeTesoros :: [Objeto] -> Int
 cantidadDeTesoros []     = 0
 cantidadDeTesoros (x:xs) = unoSi (esTesoro x) + cantidadDeTesoros xs
+
+elCaminoQueSigue :: Camino -> Camino
+elCaminoQueSigue Fin              = Fin       
+elCaminoQueSigue (Cofre _ camino) = camino
+elCaminoQueSigue (Nada camino)    = camino
 
  -- Indica si hay al menos “n” tesoros en el camino.
 
