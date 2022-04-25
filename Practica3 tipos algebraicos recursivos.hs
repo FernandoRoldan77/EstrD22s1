@@ -270,14 +270,14 @@ sumarSiSonIguales a e   =   unoSi (a == e)
 -- Dado un árbol devuelve los elementos que se encuentran en sus hojas.
 leaves :: Tree a -> [a]
 leaves  EmptyT            = []
-leaves (NodeT a ti td)    = if (verSiSonHojas  ti td) 
+leaves (NodeT a ti td)    = if (esArbolConSoloEmptyT  ti && esArbolConSoloEmptyT td) 
 						              	then a : []
 							              else  (leaves ti) ++ (leaves td)
 
 
-verSiSonHojas :: Tree a -> Tree a ->  Bool 
-verSiSonHojas EmptyT EmptyT = True
-verSiSonHojas _  	_	       = False
+esArbolConSoloEmptyT :: Tree a ->  Bool 
+esArbolConSoloEmptyT EmptyT   = True
+esArbolConSoloEmptyT _  	    = False
 
 
 -- 7. heightT :: Tree a -> Int
