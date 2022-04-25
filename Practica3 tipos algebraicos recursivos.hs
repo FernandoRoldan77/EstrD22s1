@@ -146,31 +146,28 @@ hayTesoroEn   n (Cofre objetos camino)  = hayTesoroEn (n-1) camino
 hayTesoroEn   n (Nada camino)           = hayTesoroEn (n-1) camino
 
 seEncontroTesoroEnCamino :: Camino -> Bool
-
 seEncontroTesoroEnCamino (Cofre objetos _ )  = tieneTesoro objetos
 seEncontroTesoroEnCamino _                   = False
 
 
+--alMenosNTesoros :: Int -> Camino -> Bool
+--Indica si hay al menos “n” tesoros en el camino
 alMenosNTesoros :: Int -> Camino -> Bool
-alMenosNTesoros 0 _             = True 
-alMenosNTesoros n Fin           = False
-alMenosNTesoros n camino        = alMenosNTesoros (contarSiHayTesoros n  camino) (elCaminoQueSigue camino)
+alMenosNTesoros 0 camino                   = True
+alMenosNTesoros n Fin                      = False 
+alMenosNTesoros n (Cofre objetos camino)   = alMenosNTesoros (contarCantidadDeTesoros n objetos) camino  
+alMenosNTesoros n (Nada camino)             = alMenosNTesoros n camino
 
-contarSiHayTesoros ::  Int -> Camino -> Int      
-contarSiHayTesoros n  (Cofre objetos camino) = let contadorTesoros = (n - cantidadDeTesoros objetos) in  --No se me ocurre como calcularlo de otra manera
-                                               if (contadorTesoros < 0)
-                                               then  0
-                                               else  contadorTesoros
-contarSiHayTesoros n           _             = n
+
+contarCantidadDeTesoros ::  Int -> [Objeto] -> Int      
+contarCantidadDeTesoros numeroDeTesoros  objetos =  if (numeroDeTesoros - cantidadDeTesoros objetos) < 0
+                                                    then  0
+                                                    else  numeroDeTesoros - cantidadDeTesoros objetos
 
 cantidadDeTesoros :: [Objeto] -> Int
 cantidadDeTesoros []     = 0
 cantidadDeTesoros (x:xs) = unoSi (esTesoro x) + cantidadDeTesoros xs
 
-elCaminoQueSigue :: Camino -> Camino
-elCaminoQueSigue Fin              = Fin       
-elCaminoQueSigue (Cofre _ camino) = camino
-elCaminoQueSigue (Nada camino)    = camino
 
  -- Indica si hay al menos “n” tesoros en el camino.
 
