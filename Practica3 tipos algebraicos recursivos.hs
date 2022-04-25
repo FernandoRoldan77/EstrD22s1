@@ -121,18 +121,12 @@ esTesoro  _       = False
 
 
 pasosHastaTesoro :: Camino -> Int
-pasosHastaTesoro Fin                    =   alMenosUnTesoro Fin
+pasosHastaTesoro Fin                    =  error "Debe haber al menos un tesoro"  --alMenosUnTesoro Fin
 pasosHastaTesoro (Cofre objetos camino) =   if (tieneTesoro objetos)
                                             then 0
                                             else pasosHastaTesoro camino + 1
 
 pasosHastaTesoro (Nada camino)          =   pasosHastaTesoro camino  + 1 
-
-
-alMenosUnTesoro :: Camino -> Int
-alMenosUnTesoro camino  = if (hayTesoro camino)
-                          then 0
-                          else error "Debe haber al menos un tesoro" 
 
 
 -- hayTesoroEn :: Int -> Camino -> Bool
