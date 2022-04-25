@@ -378,41 +378,32 @@ eval (Neg expA)       = eval expA * (-1)
 -- c) 1 * x = x * 1 = x
 -- d) - (- x) = x
 
--- simplificar :: ExpA -> ExpA
--- simplificar (Valor n)              = expA
--- simplificar (Valor expaA)     = expA   simplificar expA
--- simplificar (Sum Valor expA)  = simplificar
--- simplificar (Sum expA expB)   = simplificar expA (eval expB)
+simplificar :: ExpA -> ExpA
+simplificar (Valor n)         = (Valor n)
+simplificar (Sum e1 e2)       = simplificarSegunCriterioDeSuma (simplificar e1) (simplificar e2)
+simplificar (Prod e3 e4)      = simplificarSegunCriterioDeProducto (simplificar e3) (simplificar e4)
+simplificar (Neg e5)          = simplificarSegunCriterioDeNegativo (simplificar e5)
 
+simplificarSegunCriterioDeSuma :: ExpA -> ExpA -> ExpA
+simplificarSegunCriterioDeSuma e1 (Valor 0) = e1
+simplificarSegunCriterioDeSuma (Valor 0) e2 = e2
+
+
+simplificarSegunCriterioDeProducto :: ExpA -> ExpA -> ExpA
+simplificarSegunCriterioDeProducto _ (Valor 0)    = (Valor 0)
+simplificarSegunCriterioDeProducto (Valor 0) _    = (Valor 0)
+
+simplificarSegunCriterioDeNegativo :: ExpA -> ExpA
+simplificarSegunCriterioDeNegativo (Neg (Neg e1)) = e1
+simplificarSegunCriterioDeNegativo e1             = e1
+
+-- ejemplos
 suma1 = (Sum (Valor 10) (Valor 0))
+suma2 = (Sum (Valor 0) (Valor 10))
+
 producto1 = (Prod (Valor 10) (Valor 0))
+producto2 = (Prod (Valor 0) (Valor 10))
 
--- simplificar :: ExpA -> ExpA
--- simplificar (Valor n)    = Valor n
--- simplificar (Sum e1 e2)  = simplificarSi (simplificar e1) (simplificar e2)
--- simplificar (Prod e1 e2) = simplificarSi (simplificar e1) (simplificar e2)
--- simplificar (Neg e)      = simplificarSi (simplificar e) (simplificar e)
+negativo1 =(Neg (Neg (Valor 10)) )
+negativo2 =(Neg  (Valor 5))
 
-
--- simplificarSi :: ExpA -> ExpA -> ExpA
--- simplificarSi (Valor 0) e   = e
--- simplificarSi e (Valor 0)   = e
--- simplificarSi e1 e2         = Sum e1 e2
--- simplificarSi (Valor 0) e   = Valor 0
--- simplificarSi e (Valor 0)   = Valor 0 
--- simplificarSi (Valor 1) e   = e
--- simplificarSi e (Valor 1)   = e
--- simplificarSi e1 e2         = Prod e1 e2
--- simplificarSi (Neg e)       = negate e
- 
-
-
-
-
--- simplificarSi (Neg(Neg x))) = xs
--- simplificarSi e1            = e
-
--- 1También existen otras definiciones posibles. Por ejemplo, puede definirse como la distancia del camino desde la
--- raíz a su hoja más lejana. Por distancia entendemos la cantidad de nodos que hay en dicho camino. En este caso
--- las hojas tendrían altura 0, porque la distancia del camino a sí mismos lo es. Se suele utilizar más en árboles que
--- no poseen un constructor vacío.
