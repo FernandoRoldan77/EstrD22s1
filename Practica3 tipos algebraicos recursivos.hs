@@ -397,7 +397,7 @@ simplificarSegunCriterioDeNegativo :: ExpA -> ExpA
 simplificarSegunCriterioDeNegativo (Neg (Neg e1)) = e1
 simplificarSegunCriterioDeNegativo e1             = e1
 
--- ejemplos
+-- ejemplos para expresiones
 suma1 = (Sum (Valor 10) (Valor 0))
 suma2 = (Sum (Valor 0) (Valor 10))
 
