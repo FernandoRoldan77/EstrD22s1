@@ -393,8 +393,9 @@ simplificarSegunCriterioDeSuma e1 e2        = (Sum e1 e2)
 simplificarSegunCriterioDeProducto :: ExpA -> ExpA -> ExpA
 simplificarSegunCriterioDeProducto _ (Valor 0)     = (Valor 0)
 simplificarSegunCriterioDeProducto (Valor 0)  _    = (Valor 0)
-simplificarSegunCriterioDeProducto e1  (Valor 1)    = e1
-simplificarSegunCriterioDeProducto (Valor 1) e2     = e2
+simplificarSegunCriterioDeProducto e1  (Valor 1)   = e1
+simplificarSegunCriterioDeProducto (Valor 1) e2    = e2
+simplificarSegunCriterioDeProducto e1 e2           = (Prod e1 e2)
 
 simplificarSegunCriterioDeNegativo :: ExpA -> ExpA
 simplificarSegunCriterioDeNegativo (Neg e1) = e1
