@@ -387,17 +387,20 @@ simplificar (Neg e5)          = simplificarSegunCriterioDeNegativo (simplificar 
 simplificarSegunCriterioDeSuma :: ExpA -> ExpA -> ExpA
 simplificarSegunCriterioDeSuma e1 (Valor 0) = e1
 simplificarSegunCriterioDeSuma (Valor 0) e2 = e2
+simplificarSegunCriterioDeSuma e1 e2        = (Sum e1 e2)
 
 
 simplificarSegunCriterioDeProducto :: ExpA -> ExpA -> ExpA
-simplificarSegunCriterioDeProducto _ (Valor 0)    = (Valor 0)
-simplificarSegunCriterioDeProducto (Valor 0) _    = (Valor 0)
+simplificarSegunCriterioDeProducto _ (Valor 0)     = (Valor 0)
+simplificarSegunCriterioDeProducto (Valor 0)  _    = (Valor 0)
+simplificarSegunCriterioDeProducto e1  (Valor 1)    = e1
+simplificarSegunCriterioDeProducto (Valor 1) e2     = e2
 
 simplificarSegunCriterioDeNegativo :: ExpA -> ExpA
-simplificarSegunCriterioDeNegativo (Neg (Neg e1)) = e1
-simplificarSegunCriterioDeNegativo e1             = e1
+simplificarSegunCriterioDeNegativo (Neg e1) = e1
+simplificarSegunCriterioDeNegativo e1       = (Neg e1)
 
--- ejemplos para expresiones
+-- ejemplos para simplificar
 suma1 = (Sum (Valor 10) (Valor 0))
 suma2 = (Sum (Valor 0) (Valor 10))
 
