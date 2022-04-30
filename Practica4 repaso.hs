@@ -94,6 +94,9 @@ mapa3                = (Bifurcacion cofreSoloTesoros mapa1 mapa2)
 mapa4                = (Bifurcacion cofreVacio mapa2 mapa3)
 mapa5                = (Bifurcacion cofreConChatarra mapa4 mapa4)
 
+mapa6                = (Bifurcacion cofreConChatarra mapa3 mapa3)
+
+
 -- Definir las siguientes operaciones:
 -- 1. hayTesoro :: Mapa -> Bool
 -- Indica si hay un tesoro en alguna parte del mapa.
@@ -132,69 +135,230 @@ hayTesoroEnLaIzquierda _    = False
 --Indica el camino al tesoro. Precondición: existe un tesoro y es único.
 
 caminoAlTesoro :: Mapa -> [Dir]
-caminoAlTesoro (Fin cofre)                   = []
-caminoAlTesoro (Bifurcacion cofre map1 map2) = if hayTesoro map1
-                                               then Izq : caminoAlTesoro map1
-                                               else Der : caminoAlTesoro map2
+caminoAlTesoro (Fin cofre)                   = error "debe existir un tesoro y es unico"
+caminoAlTesoro (Bifurcacion cofre map1 map2) = if (tieneTesoro cofre)
+                                                then []
+                                                else elegirElMapaQueConElCaminoAlTesoro map1  map2
 
--- singularSi x True  = [x]
--- singularSi _ False = []
+elegirElMapaQueConElCaminoAlTesoro::  Mapa -> Mapa -> [Dir]
+elegirElMapaQueConElCaminoAlTesoro mapa1 mapa2     = if(hayTesoro mapa1)
+                                                     then Izq : caminoAlTesoro mapa1
+                                                     else Der : caminoAlTesoro mapa2
+
+-- 4. caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+-- Indica el camino de la rama más larga.
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+caminoDeLaRamaMasLarga (Fin cofre)                      = []
+caminoDeLaRamaMasLarga (Bifurcacion cofre mapa1 mapa2)  = elegirCaminoMasLargo (caminoDeLaRamaMasLarga mapa1) (caminoDeLaRamaMasLarga mapa2)
+
+elegirCaminoMasLargo :: [Dir] -> [Dir] -> [Dir]
+elegirCaminoMasLargo  direcciones1 direcciones2 =   if (length direcciones1 > length direcciones2)
+                                                    then Izq : direcciones1
+                                                    else Der : direcciones2
+
+singularSi x True  = [x]
+singularSi _ False = []
 
 -- consACada :: a -> [[a]] -> [[a]]
 -- consACada x []       = []
 -- consACada x (xs:xss) = (x:xs) : consACada x xss
 
-
--- 4. caminoDeLaRamaMasLarga :: Mapa -> [Dir]
--- Indica el camino de la rama más larga.
-
--- 
-
-
 -- 5. tesorosPorNivel :: Mapa -> [[Objeto]]
 -- Devuelve los tesoros separados por nivel en el árbol.
 
+tesorosPorNivel :: Mapa -> [[Objeto]]
+tesorosPorNivel (Fin cofre)     = []  
+tesorosPorNivel (Bifurcacion cofre mapa1 mapa2) =  (buscarTesorosEn cofre) :  juntarTesorosPorNivel (tesorosPorNivel mapa1 ) 
+                                                                                                    (tesorosPorNivel mapa2)  
+
+buscarTesorosEn :: Cofre -> [Objeto]
+buscarTesorosEn (Cofre objetos)  = devolverTesoros objetos
+
+devolverTesoros:: [Objeto] -> [Objeto]
+devolverTesoros []        = []
+devolverTesoros (o:os)    = if(esTesoro o)
+                            then o: devolverTesoros os
+                            else devolverTesoros os
+
+juntarTesorosPorNivel:: [[Objeto]] -> [[Objeto]] -> [[Objeto]]
+juntarTesorosPorNivel []  obs2              = obs2
+juntarTesorosPorNivel obs1  []              = obs1
+juntarTesorosPorNivel (o1:obs1) (o2:obs2)   = (o1 ++ o2) : juntarTesorosPorNivel obs1 obs2
+
+
 -- 6. todosLosCaminos :: Mapa -> [[Dir]]
 -- Devuelve todos lo caminos en el mapa.
+todosLosCaminos :: Mapa -> [[Dir]]
+todosLosCaminos (Fin _ )                    = [[]]
+todosLosCaminos (Bifurcacion _ mapa1 mapa2) =   consACada Izq (todosLosCaminos mapa1) ++
+                                                consACada Der (todosLosCaminos mapa2)
+
+consACada :: a -> [[a]] -> [[a]]
+consACada x []       = []
+consACada x (xs:xss) = (x:xs) : consACada x xss
+
 
 -- 3. Nave Espacial
 -- modelaremos una Nave como un tipo algebraico, el cual nos permite construir una nave espacial,
 -- dividida en sectores, a los cuales podemos asignar tripulantes y componentes. La representación
 -- es la siguiente:
 
--- data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
--- data Barril = Comida | Oxigeno | Torpedo | Combustible
--- data Sector = S SectorId [Componente] [Tripulante]
--- type SectorId = String
--- type Tripulante = String
--- data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
--- data Nave = N (Tree Sector)
+data Componente = LanzaTorpedos | 
+                  Motor Int     | 
+                  Almacen [Barril] deriving Show
+data Barril = Comida  | 
+              Oxigeno | 
+              Torpedo | 
+              Combustible deriving Show
+
+data Sector = S SectorId [Componente] [Tripulante] deriving Show
+type SectorId = String
+type Tripulante = String
+data Tree a = EmptyT | 
+              NodeT a (Tree a) (Tree a) deriving Show
+data Nave = N (Tree Sector) deriving Show
+
+componente1 = (Almacen [Comida,Oxigeno,Combustible])
+componente2 = (Motor 10)
+componente3 = (Almacen [Comida, Oxigeno, Combustible, Torpedo])
+
+sector1  = (S "Midgar"[componente3]["Cloud, Barret"])
+sector2 = (S "Kalm"[componente2]["Tifa, Red"])
+sectorT1 = (EmptyT)
+sectorT2 = (NodeT sector1 sectorT1 sectorT1)
+sectorT3 = (NodeT sector2 sectorT1 sectorT1)
+sectorT4 = (NodeT sector2 sectorT3 sectorT3)
+
+nave1    = N(sectorT2)
+nave2    = N(sectorT4)
 
 -- Implementar las siguientes funciones utilizando recursión estructural:
 
 -- 1. sectores :: Nave -> [SectorId]
 -- Propósito: Devuelve todos los sectores de la nave.
+sectores :: Nave -> [SectorId]
+sectores (N sectorT)    =  devolverSectores ( sectorT)
+
+devolverSectores :: Tree Sector -> [SectorId]
+devolverSectores EmptyT              =  [] 
+devolverSectores (NodeT s ti td)     = idSector s  : (devolverSectores ti) ++ 
+                                                     (devolverSectores td)
+idSector:: Sector  -> String
+idSector (S id _ _) = id
+
 
 -- 2. poderDePropulsion :: Nave -> Int
 -- Propósito: Devuelve la suma de poder de propulsión de todos los motores de la nave. Nota:
 -- el poder de propulsión es el número que acompaña al constructor de motores.
 
+poderDePropulsion :: Nave -> Int
+poderDePropulsion (N sectorT)   =   calcularPropulsion sectorT
+
+calcularPropulsion :: Tree Sector -> Int
+calcularPropulsion EmptyT  = 0
+calcularPropulsion (NodeT sector ti td) = propulsionDeSector sector + (calcularPropulsion ti) + (calcularPropulsion td)
+
+propulsionDeSector :: Sector -> Int
+propulsionDeSector (S _ componentes _)  = contarPropulsion componentes
+
+contarPropulsion :: [Componente] -> Int
+contarPropulsion []     =   0
+contarPropulsion (c:cs) = sumarPoderSiEsMotor c + contarPropulsion cs
+
+sumarPoderSiEsMotor :: Componente  -> Int
+sumarPoderSiEsMotor (Motor poder)  = poder
+sumarPoderSiEsMotor _          = 0
+
+
 -- 3. barriles :: Nave -> [Barril]
 -- Propósito: Devuelve todos los barriles de la nave.
+barriles:: Nave -> [Barril]
+barriles (N sectorT)        = devolverBarriles sectorT
 
--- 4. agregarASector :: [Componente] -> SectorId -> Nave -> Nave
--- Propósito: Añade una lista de componentes a un sector de la nave.
--- Nota: ese sector puede no existir, en cuyo caso no añade componentes.
+devolverBarriles :: Tree Sector -> [Barril]
+devolverBarriles EmptyT               =   []
+devolverBarriles (NodeT sector ti td) = buscarBarriles sector ++ 
+                                        (devolverBarriles ti) ++ 
+                                        (devolverBarriles td)
+buscarBarriles:: Sector -> [Barril]
+buscarBarriles (S _ componentes _)  = filtrarPorBarril componentes
+
+filtrarPorBarril :: [Componente]    -> [Barril]
+filtrarPorBarril []        = []
+filtrarPorBarril (c:cs)    = agregarSiEsBarril c ++ filtrarPorBarril cs
+
+agregarSiEsBarril :: Componente -> [Barril]
+agregarSiEsBarril (Almacen barriles) = barriles
+agregarSiEsBarril _                  = []
+
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+agregarASector cs  sectorId (N sectorT)  =   N (agregarComponentesA cs sectorId sectorT)
+
+agregarComponentesA :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+agregarComponentesA    cs sectorId  EmptyT               = EmptyT
+agregarComponentesA    cs sectorId (NodeT sector ti td)  = NodeT (agregarComponenteASectorSi cs sectorId sector) (agregarComponentesA cs sectorId ti) 
+                                                                                                        (agregarComponentesA cs sectorId td)
+
+agregarComponenteASectorSi :: [Componente] -> SectorId -> Sector -> Sector
+agregarComponenteASectorSi cs sectorId (S id componentes tripulantes ) = if (esMismoSector id sectorId)
+                                                                         then (S id (cs ++ componentes) tripulantes)
+                                                                         else (S id componentes tripulantes)
 
 -- 5. asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
 -- Propósito: Incorpora un tripulante a una lista de sectores de la nave.
 -- Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+asignarTripulanteA tripulante sectoresId (N sectorT) = N (agregarTripulanteA tripulante sectoresId sectorT)
+
+agregarTripulanteA :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+agregarTripulanteA  t sectoresId EmptyT               = EmptyT
+agregarTripulanteA  t sectoresId (NodeT sector ti td) = NodeT(agregarTripulantesASectores t sectoresId sector) (agregarTripulanteA t sectoresId ti) 
+                                                                                                               (agregarTripulanteA t sectoresId td)
+
+agregarTripulantesASectores :: Tripulante -> [SectorId] -> Sector -> Sector
+agregarTripulantesASectores t sectoresId (S id componentes tripulantes)   =  (S id componentes (agregarTripulanteAUnSector t sectoresId id))
+
+agregarTripulanteAUnSector :: Tripulante -> [SectorId] -> SectorId  -> [Tripulante]
+agregarTripulanteAUnSector  t [] sectorId        = []
+agregarTripulanteAUnSector  t (s:ss) sectorId    = if (esMismoSector s sectorId)
+                                                   then t :(agregarTripulanteAUnSector t ss sectorId)
+                                                   else (agregarTripulanteAUnSector t ss sectorId)
+
+esMismoSector :: SectorId -> SectorId -> Bool
+esMismoSector s1 s2     =  s1 == s2
+
 
 -- 6. sectoresAsignados :: Tripulante -> Nave -> [SectorId]
 -- Propósito: Devuelve los sectores en donde aparece un tripulante dado.
 
 -- 7. tripulantes :: Nave -> [Tripulante]
 -- Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes :: Nave -> [Tripulante]
+tripulantes (N sectorT)     = tripulantesSinRepetidos( buscarTripulantes sectorT)
+
+buscarTripulantes:: Tree Sector -> [Tripulante]
+buscarTripulantes EmptyT               =   []
+buscarTripulantes (NodeT sector ti td) =  tripulantesDelSector sector ++ 
+                                          (buscarTripulantes ti) ++ 
+                                          (buscarTripulantes td)
+
+tripulantesDelSector :: Sector -> [Tripulante]
+tripulantesDelSector (S _ _ tripulantes)    =  tripulantesSinRepetidos tripulantes
+
+
+tripulantesSinRepetidos :: [Tripulante] -> [Tripulante]
+tripulantesSinRepetidos []     = []
+tripulantesSinRepetidos (t:ts) = agregarSiHaceFalta t (tripulantesSinRepetidos ts)
+
+agregarSiHaceFalta :: Tripulante -> [Tripulante] -> [Tripulante]
+agregarSiHaceFalta t ts = if (pertenece t ts)
+                             then ts
+                             else t:ts
+
+pertenece :: Eq a => a -> [a] -> Bool
+pertenece a [] = False
+pertenece a (x:xs) = (a == x) || pertenece a xs
+
 
 -- 4. Manada de lobos
 -- Modelaremos una manada de lobos, como un tipo Manada, que es un simple registro compuesto
