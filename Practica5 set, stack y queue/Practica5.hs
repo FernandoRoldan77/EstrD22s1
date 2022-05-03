@@ -4,74 +4,72 @@
 -- 1. Cálculo de costos
 -- Especificar el costo operacional de las siguientes funciones:
 
--- head’ :: [a] -> a
--- head’ (x:xs) = x
+head’ :: [a] -> a -- Constante
+head’ (x:xs) = x
 
--- sumar :: Int -> Int
--- sumar x = x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
+sumar :: Int -> Int -- Lineal
+sumar x = x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
 
--- factorial :: Int -> Int
--- factorial 0 = 1
--- factorial n = n * factorial (n-1)
-
--- longitud :: [a] -> Int
--- longitud [] = 0
--- longitud (x:xs) = 1 + longitud xs
-
--- factoriales :: [Int] -> [Int]
--- factoriales [] = []
--- factoriales (x:xs) = factorial x : factoriales xs
-
--- pertenece :: Eq a => a -> [a] -> Bool
--- pertenece n [] = False
--- pertenece n (x:xs) = n == x || pertenece n xs
-
--- sinRepetidos :: Eq a => [a] -> [a]
--- sinRepetidos [] = []
--- sinRepetidos (x:xs) =
--- if pertenece x xs
--- then sinRepetidos xs
--- else x : sinRepetidos xs
+factorial :: Int -> Int -- Lineal
+factorial 0 = 1
+factorial n = n * factorial (n-1)
 
 
--- -- equivalente a (++)
--- append :: [a] -> [a] -> [a]
--- append [] ys = ys
--- append (x:xs) ys = x : append xs ys
+longitud :: [a] -> Int  -- Lineal
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
 
--- concatenar :: [String] -> String
--- concatenar [] = []
--- concatenar (x:xs) = x ++ concatenar xs
+factoriales :: [Int] -> [Int] -- Cuadratica
+factoriales [] = []
+factoriales (x:xs) = factorial x : factoriales xs  -- Lineal
 
--- takeN :: Int -> [a] -> [a]
--- takeN 0 xs = []
--- takeN n [] = []
--- takeN n (x:xs) = x : takeN (n-1) xs
+pertenece :: Eq a => a -> [a] -> Bool  -- Lineal
+pertenece n [] = False
+pertenece n (x:xs) = n == x || pertenece n xs
 
--- dropN :: Int -> [a] -> [a]
--- dropN 0 xs = xs
--- dropN n [] = []
--- dropN n (x:xs) = dropN (n-1) xs
+sinRepetidos :: Eq a => [a] -> [a] --Cuadratico
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if pertenece x xs        --Lineal
+                      then sinRepetidos xs
+                      else x : sinRepetidos xs
 
--- partir :: Int -> [a] -> ([a], [a])
--- partir n xs = (takeN n xs, dropN n xs)
 
--- minimo :: Ord a => [a] -> a
--- minimo [x] = x
--- minimo (x:xs) = min x (minimo xs)
+-- equivalente a (++)
+append :: [a] -> [a] -> [a]      -- Constante
+append [] ys = ys
+append (x:xs) ys = x : append xs ys
 
--- sacar :: Eq a => a -> [a] -> [a]
--- sacar n [] = []
--- sacar n (x:xs) =
--- if n == x
--- then xs
--- else x : sacar n xs
+concatenar :: [String] -> String  -- Constante
+concatenar [] = []
+concatenar (x:xs) = x ++ concatenar xs
 
--- ordenar :: Ord a => [a] -> [a]
--- ordenar [] = []
--- ordenar xs =
--- let m = minimo xs
--- in m : ordenar (sacar m xs)
+takeN :: Int -> [a] -> [a] --Lineal
+takeN 0 xs = []
+takeN n [] = []
+takeN n (x:xs) = x : takeN (n-1) xs --constante
+
+dropN :: Int -> [a] -> [a] --Lineal
+dropN 0 xs = xs
+dropN n [] = []
+dropN n (x:xs) = dropN (n-1) xs --constante
+
+partir :: Int -> [a] -> ([a], [a]) -- cuadratica
+partir n xs = (takeN n xs, dropN n xs) --constantes
+
+minimo :: Ord a => [a] -> a -- lineal
+minimo [x] = x
+minimo (x:xs) = min x (minimo xs) --constante
+
+sacar :: Eq a => a -> [a] -> [a] -- Lineal
+sacar n [] = []
+sacar n (x:xs) = if n == x          -- constante
+                 then xs
+                 else x : sacar n xs
+
+ordenar :: Ord a => [a] -> [a] -- Cuadratica
+ordenar [] = []
+ordenar xs = let m = minimo xs  --lineal
+             in m : ordenar (sacar m xs)
 
 -- 2. Set (conjunto)
 -- Un Set es un tipo abstracto de datos que consta de las siguientes operaciones:
