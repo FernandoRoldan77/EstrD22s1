@@ -108,16 +108,6 @@ unirTodos EmptyT              =   emptyS
 unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (unirTodos setD)) 
 
 
--- unirTodos :: Eq a => Tree (Set a) -> Set a
--- -- Dado un arbol de conjuntos devuelve un conjunto con la union de todos los conjuntos
--- -- del arbol.
--- unirTodos EmptyT          = emptyS
--- unirTodos (NodeT e t1 t2) = unionS (unionS e (unirTodos t1)) (unionS e (unirTodos t2))
-
--- 3. Implementar la variante del tipo abstracto Set que posee una lista y admite repetidos. En
--- otras palabras, al agregar no va a chequear que si el elemento ya se encuentra en la lista, pero
--- sí debe comportarse como Set ante el usuario (quitando los elementos repetidos al pedirlos,
--- por ejemplo). Contrastar la eficiencia obtenida en esta implementación con la anterior.
 
 -- 3. Queue (cola)
 -- Una Queue es un tipo abstracto de datos de naturaleza FIFO (first in, first out). Esto significa

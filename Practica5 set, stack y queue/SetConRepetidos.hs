@@ -7,6 +7,9 @@ module SetConRepetidos
 -- sí debe comportarse como Set ante el usuario (quitando los elementos repetidos al pedirlos,
 -- por ejemplo). Contrastar la eficiencia obtenida en esta implementación con la anterior.
 
+{-La diferencia en la eficiencia es que se agregaron mas funciones con costo cuadratico al tener repetidos 
+en la union y en el setToList dejo de ser constante al tener que filtrar los repetidos para respetar el comportamiento Set -}
+
 data SetR a = Set [a] Int   
  {- INV.REP: *[a] pueden ser repetidos
             *Int es la cantidad de todos los elementos de [a]
@@ -67,8 +70,7 @@ sacar n (x:xs) = if n == x          -- constante
 -- Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos. conjuntos.
 
 unionS :: Eq a => SetR a -> SetR a -> SetR a -- cuadratica
-unionS (Set listS1 _) (Set listS2 _)    =   let listaDeSet1Y2 = concatenar listS1 listS2
-                                              in (Set listaDeSet1Y2 (length listaDeSet1Y2))
+unionS (Set listS1 _) (Set listS2 _)    =   Set (listS1 ++ listS2) (lenght(concatenar listS1 listS2)) -- cuadratica
 
 concatenar :: [a] -> [a] -> [a] -- lineal
 concatenar [] ys           =   ys
