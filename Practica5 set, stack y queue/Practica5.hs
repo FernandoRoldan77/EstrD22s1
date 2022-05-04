@@ -1,5 +1,7 @@
 import Set
 --import SetConRepetidos
+import Queue
+--import QueueV2
 -- Trabajo Práctico # 5 - Set, Stack y Queue
 
 -- 1. Cálculo de costos
@@ -108,45 +110,26 @@ unirTodos EmptyT              =   emptyS
 unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (unirTodos setD)) 
 
 
-
--- 3. Queue (cola)
--- Una Queue es un tipo abstracto de datos de naturaleza FIFO (first in, first out). Esto significa
--- que los elementos salen en el orden con el que entraron, es decir, el que se agrega primero es el
--- primero en salir (como la cola de un banco). Su interfaz es la siguiente:
-
--- emptyQ :: Queue a
--- Crea una cola vacía.
-
--- isEmptyQ :: Queue a -> Bool
--- Dada una cola indica si la cola está vacía.
-
--- queue :: a -> Queue a -> Queue a
--- Dados un elemento y una cola, agrega ese elemento a la cola.
-
--- firstQ :: Queue a -> a
--- Dada una cola devuelve el primer elemento de la cola.
-
--- dequeue :: Queue a -> Queue a
--- Dada una cola la devuelve sin su primer elemento.
-
--- 1. Implemente el tipo abstracto Queue utilizando listas. Los elementos deben encolarse por el
--- final de la lista y desencolarse por delante.
-
-
--- 2. Implemente ahora la versión que agrega por delante y quita por el final de la lista. Compare
--- la eficiencia entre ambas implementaciones.
-
 -- 3. Como usuario del tipo abstracto Queue implementar las siguientes funciones:
+
 -- lengthQ :: Queue a -> Int
 -- Cuenta la cantidad de elementos de la cola.
+lengthQ :: Queue a -> Int --0(1)
+lengthQ queue    =   (lenQ queue)
 
 -- queueToList :: Queue a -> [a]
 -- Dada una cola devuelve la lista con los mismos elementos,
 -- donde el orden de la lista es el de la cola.
 -- Nota: chequear que los elementos queden en el orden correcto.
+queueToList :: Queue a -> [a] --
+queueToList queue   = error "No debe estar vacia"
+queueToList queue   = [firstQ queue] ++ queueToList queue
 
 -- unionQ :: Queue a -> Queue a -> Queue a
 -- Inserta todos los elementos de la segunda cola en la primera.
+unionQ :: Queue a -> Queue a -> Queue a -- 0(n^2)
+unionQ  q1 q2   =   emptyQ
+unionQ  q1 q2   =   unionQ  (queue (firstQ q2) q1)  q2  --queue O(n) first O(1)
 
 -- 4. Stack (pila)
 -- Una Stack es un tipo abstracto de datos de naturaleza LIFO (last in, first out). Esto significa
@@ -193,4 +176,3 @@ unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (
 -- todas las operaciones deben garantizar el siguiente invariante de representación: Si fs se encuentra
 -- vacía, entonces la cola se encuentra vacía.
 -- ¿Qué ventaja tiene esta representación de Queue con respecto a la que usa una sola lista?
--- Página 5 de 5
