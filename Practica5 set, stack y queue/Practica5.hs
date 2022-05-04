@@ -1,5 +1,5 @@
 import Set
-
+--import SetConRepetidos
 -- Trabajo Práctico # 5 - Set, Stack y Queue
 
 -- 1. Cálculo de costos
@@ -98,14 +98,21 @@ pasarListaAUnConjunto :: Eq a => [a] -> Set a -- lineal
 pasarListaAUnConjunto  []     = emptyS
 pasarListaAUnConjunto (x:xs)  = addS x (pasarListaAUnConjunto xs)
 
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
 
 -- unirTodos :: Eq a => Tree (Set a) -> Set a
 -- Dado un arbol de conjuntos devuelve un conjunto con la union de todos los conjuntos
 -- del arbol.
---unirTodos :: Eq a => Tree (Set a) -> Set a
--- unirTodos EmptyT              =   emptyS
--- unirTodos (NodeT a setI setD) =   unionS (setI) ++ unionS (setD)
+unirTodos :: Eq a => Tree (Set a) -> Set a -- cuadratica
+unirTodos EmptyT              =   emptyS
+unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (unirTodos setD)) 
 
+
+-- unirTodos :: Eq a => Tree (Set a) -> Set a
+-- -- Dado un arbol de conjuntos devuelve un conjunto con la union de todos los conjuntos
+-- -- del arbol.
+-- unirTodos EmptyT          = emptyS
+-- unirTodos (NodeT e t1 t2) = unionS (unionS e (unirTodos t1)) (unionS e (unirTodos t2))
 
 -- 3. Implementar la variante del tipo abstracto Set que posee una lista y admite repetidos. En
 -- otras palabras, al agregar no va a chequear que si el elemento ya se encuentra en la lista, pero
