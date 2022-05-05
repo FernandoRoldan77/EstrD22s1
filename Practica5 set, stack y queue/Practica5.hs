@@ -115,7 +115,9 @@ unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (
 -- lengthQ :: Queue a -> Int
 -- Cuenta la cantidad de elementos de la cola.
 lengthQ :: Queue a -> Int --0(1)
-lengthQ queue    =   (lenQ queue)
+lengthQ queue    =   if isEmptyQ queue
+                     then 0
+                     else lengthQ queue + 1
 
 -- queueToList :: Queue a -> [a]
 -- Dada una cola devuelve la lista con los mismos elementos,
