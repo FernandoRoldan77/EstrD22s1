@@ -2,6 +2,7 @@ import Set
 --import SetConRepetidos
 import Queue
 --import QueueV2
+import Stack
 -- Trabajo Práctico # 5 - Set, Stack y Queue
 
 -- 1. Cálculo de costos
@@ -114,16 +115,17 @@ unirTodos (NodeT a setI setD) =  unionS (unionS a (unirTodos setI))  (unionS a (
 
 -- lengthQ :: Queue a -> Int
 -- Cuenta la cantidad de elementos de la cola.
-lengthQ :: Queue a -> Int --0(1)
+lengthQ :: Queue a -> Int --0(1) en  isEmptyQ y lenghtQ queue +1
 lengthQ queue    =   if isEmptyQ queue
-                     then 0
-                     else lengthQ queue + 1
+                      then 0
+                      else 1 + lengthQ (dequeue queue)
 
 -- queueToList :: Queue a -> [a]
 -- Dada una cola devuelve la lista con los mismos elementos,
 -- donde el orden de la lista es el de la cola.
 -- Nota: chequear que los elementos queden en el orden correcto.
-queueToList :: Queue a -> [a] --
+
+queueToList :: Queue a -> [a] -- O(n) 
 queueToList queue   = error "No debe estar vacia"
 queueToList queue   = [firstQ queue] ++ queueToList queue
 
@@ -133,48 +135,32 @@ unionQ :: Queue a -> Queue a -> Queue a -- 0(n^2)
 unionQ  q1 q2   =   emptyQ
 unionQ  q1 q2   =   unionQ  (queue (firstQ q2) q1)  q2  --queue O(n) first O(1)
 
--- 4. Stack (pila)
--- Una Stack es un tipo abstracto de datos de naturaleza LIFO (last in, first out). Esto significa
--- que los últimos elementos agregados a la estructura son los primeros en salir (como en una pila de
--- platos). Su interfaz es la siguiente:
-
--- emptyS :: Stack a
--- Crea una pila vacía.
-
--- isEmptyS :: Stack a -> Bool
--- Dada una pila indica si está vacía.
-
--- push :: a -> Stack a -> Stack a
--- Dados un elemento y una pila, agrega el elemento a la pila.
-
--- top :: Stack a -> a
--- Dada un pila devuelve el elemento del tope de la pila.
--- pop :: Stack a -> Stack a
-
--- Dada una pila devuelve la pila sin el primer elemento.
--- lenS :: Stack a -> Int
-
--- Dada una pila devuelve la pila sin el primer elemento.
--- Costo: constante.
+--STACK
 
 -- 1. Como usuario del tipo abstracto Stack implementar las siguientes funciones:
 -- apilar :: [a] -> Stack a
+
+apilar :: [a] -> Stack a  -- O(n) siendo n (x:xs)  
+apilar []       =   emptySt
+apilar (x:xs)   =   push x (apilar xs)
+
+
 -- Dada una lista devuelve una pila sin alterar el orden de los elementos.
 
 -- desapilar :: Stack a -> [a]
 -- Dada una pila devuelve una lista sin alterar el orden de los elementos.
+desapilar :: Stack a -> [a]  -- O(n) siendo  top stack n
+desapilar stack =   if isEmptySt stack --O(1)
+                     then []
+                     else top stack : desapilar (pop stack) -- O(n)
 
 -- insertarEnPos :: Int -> a -> Stack a -> Stack a
 -- Dada una posicion válida en la stack y un elemento, ubica dicho elemento en dicha
 -- posición (se desapilan elementos hasta dicha posición y se inserta en ese lugar).
+insertarEnPos :: Int -> a -> Stack a -> Stack a -- 0()
+insertarEnPos 0 elemento stack = push elemento stack
+insertarEnPos n elemento stack = push (top stack) (insertarEnPos (n-1) elemento (pop stack))                            
 
--- 2. Implementar el tipo abstracto Stack utilizando una lista.
+stack1 = push 30( push 20( push 10 emptySt)) --stack para pruebas
 
--- 5. Queue con dos listas
--- Implemente la interfaz de Queue pero en lugar de una lista utilice dos listas. Esto permitirá
--- que todas las operaciones sean constantes (aunque alguna/s de forma amortizada).
--- La estructura funciona de la siguiente manera. Llamemos a una de las listas fs (front stack) y
--- a la otra bs (back stack). Quitaremos elementos a través de fs y agregaremos a través de bs, pero
--- todas las operaciones deben garantizar el siguiente invariante de representación: Si fs se encuentra
--- vacía, entonces la cola se encuentra vacía.
--- ¿Qué ventaja tiene esta representación de Queue con respecto a la que usa una sola lista?
+
